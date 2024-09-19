@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from '@config/configuration';
 import { User } from '@users/entities/user.entity';
 import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
+import { LinksModule } from './links/links.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
         synchronize: true,
       }),
     }),
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
