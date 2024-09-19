@@ -9,7 +9,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -18,10 +18,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@users/*": ["src/users/*"],
-      "@libs/*": ["src/libs/*"],
-      "@shared/*": ["src/shared/*"]
+      "@config/*": ["config/*"],
+      "@users/*": ["users/*"],
+      "@libs/*": ["libs/*"],
+      "@shared/*": ["shared/*"]
     }
   }
 }
