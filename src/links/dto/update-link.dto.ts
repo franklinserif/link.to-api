@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLinkDto } from './create-link.dto';
+import { IsString, IsUrl } from 'class-validator';
 
-export class UpdateLinkDto extends PartialType(CreateLinkDto) {}
+export class UpdateLinkDto {
+  @IsString()
+  @IsUrl()
+  urlOriginal: string;
+}
