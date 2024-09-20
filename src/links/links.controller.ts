@@ -41,10 +41,10 @@ export class LinksController {
     );
 
     if (!link.status) {
-      res.status(404).redirect('/');
+      return res.status(404).redirect('/');
     }
 
-    res.redirect(link.urlOriginal);
+    return res.redirect(link.urlOriginal);
   }
 
   @Patch(':id')
