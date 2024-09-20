@@ -40,6 +40,10 @@ export class LinksController {
       visitorImformation,
     );
 
+    if (!link.status) {
+      res.status(404).redirect('/');
+    }
+
     res.redirect(link.urlOriginal);
   }
 
