@@ -29,6 +29,10 @@ export class Link {
   @Column()
   expirationDate: Date;
 
+  @ManyToOne(() => User, (users) => users.links, { nullable: true })
+  user: User;
+
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
