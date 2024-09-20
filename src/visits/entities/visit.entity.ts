@@ -1,6 +1,8 @@
+import { Link } from '@links/entities/link.entity';
 import {
   Column,
   CreateDateColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -9,7 +11,7 @@ export class Visit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   browser: string;
 
   @Column({ nullable: true })
