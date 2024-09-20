@@ -10,6 +10,7 @@ import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from './links/links.module';
 import { Link } from '@links/entities/link.entity';
 import { VisitsModule } from './visits/visits.module';
+import { Visit } from '@visits/entities/visit.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { VisitsModule } from './visits/visits.module';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.name'),
-        entities: [User, Link],
+        entities: [User, Link, Visit],
         synchronize: true,
       }),
     }),
