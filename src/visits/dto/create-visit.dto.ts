@@ -1,4 +1,5 @@
-import { IsIP, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Link } from '@links/entities/link.entity';
+import { IsIP, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateVisitDto {
   @IsString()
@@ -18,11 +19,9 @@ export class CreateVisitDto {
   @IsIP()
   ip: string;
 
-  @IsNumber()
-  @IsOptional()
-  view: number;
-
   @IsString()
   @IsOptional()
   os: string;
+
+  link: Link;
 }
