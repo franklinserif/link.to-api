@@ -1,24 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateVisitDto, UpdateVisitDto } from '@visits/dto';
+import { Visit } from '@visits/entities/visit.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class VisitsService {
-  create(createVisitDto: CreateVisitDto) {
-    return 'This action adds a new visit';
-  }
+  private readonly logger: Logger = new Logger(VisitsService.name);
+  constructor(
+    @InjectRepository(Visit)
+    private readonly visitsRepository: Repository<Visit>,
+  ) {}
 
-  findAll() {
-    return `This action returns all visits`;
-  }
+  async create(createVisitDto: CreateVisitDto) {
+    try {
+      const visitor = this.visitsRepository.create(createVisitDto);
 
-  findOne(id: number) {
-    return `This action returns a #${id} visit`;
-  }
-
-  update(id: number, updateVisitDto: UpdateVisitDto) {
-    return `This action updates a #${id} visit`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} visit`;
+      await this.visitsRepository.save(visitor);
+      return visitor;
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 }
