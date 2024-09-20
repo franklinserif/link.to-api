@@ -2,11 +2,13 @@ import { Link } from '@links/entities/link.entity';
 import {
   Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+@Entity('visits')
 export class Visit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
