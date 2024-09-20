@@ -22,7 +22,8 @@
       "@libs/*": ["libs/*"],
       "@shared/*": ["shared/*"],
       "@users/*": ["users/*"],
-      "@links/*": ["links/*"]
+      "@links/*": ["links/*"],
+      "@visits/*": ["visits/*"]
     }
   }
 }
