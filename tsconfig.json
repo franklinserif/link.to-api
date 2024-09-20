@@ -19,9 +19,10 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@config/*": ["config/*"],
-      "@users/*": ["users/*"],
       "@libs/*": ["libs/*"],
-      "@shared/*": ["shared/*"]
+      "@shared/*": ["shared/*"],
+      "@users/*": ["users/*"],
+      "@links/*": ["links/*"]
     }
   }
 }
