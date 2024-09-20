@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
+import { Response } from 'express';
 
 @Controller('links')
 export class LinksController {
@@ -26,8 +28,10 @@ export class LinksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.linksService.findOne(id);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const link = await this.linksService.findOriginalUrl(id);
+
+    res.redirect(link.urlOriginal);
   }
 
   @Patch(':id')
