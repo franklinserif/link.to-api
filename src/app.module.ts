@@ -9,6 +9,7 @@ import { User } from '@users/entities/user.entity';
 import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from './links/links.module';
 import { Link } from '@links/entities/link.entity';
+import { VisitsModule } from './visits/visits.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { Link } from '@links/entities/link.entity';
       }),
     }),
     LinksModule,
+    VisitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
