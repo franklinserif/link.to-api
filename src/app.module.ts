@@ -8,6 +8,7 @@ import configuration from '@config/configuration';
 import { User } from '@users/entities/user.entity';
 import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from './links/links.module';
+import { Link } from '@links/entities/link.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { LinksModule } from './links/links.module';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.name'),
-        entities: [User],
+        entities: [User, Link],
         synchronize: true,
       }),
     }),
