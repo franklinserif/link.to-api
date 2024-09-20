@@ -27,6 +27,9 @@ export class Visit {
   @Column()
   os: string;
 
+  @ManyToOne(() => Link, (link) => link.visits)
+  link: Link;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

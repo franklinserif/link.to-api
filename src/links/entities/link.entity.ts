@@ -1,10 +1,12 @@
 import { User } from '@users/entities/user.entity';
+import { Visit } from '@visits/entities/visit.entity';
 import {
   BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,9 +22,6 @@ export class Link {
   @Column({ type: 'text', name: 'short_URL', unique: true })
   shortURL: string;
 
-  @ManyToOne(() => User, (users) => users.links, { nullable: true })
-  user: User;
-
   @Column({ default: true })
   status: boolean;
 
@@ -32,6 +31,8 @@ export class Link {
   @ManyToOne(() => User, (users) => users.links, { nullable: true })
   user: User;
 
+  @OneToMany(() => Visit, (visits) => visits.link)
+  visits: Visit[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
