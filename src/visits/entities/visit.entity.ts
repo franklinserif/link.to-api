@@ -26,9 +26,6 @@ export class Visit {
   ip: string;
 
   @Column()
-  view: number;
-
-  @Column()
   os: string;
 
   @ManyToOne(() => Link, (link) => link.visits)
