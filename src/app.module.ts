@@ -11,6 +11,7 @@ import { LinksModule } from './links/links.module';
 import { Link } from '@links/entities/link.entity';
 import { VisitsModule } from './visits/visits.module';
 import { Visit } from '@visits/entities/visit.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { Visit } from '@visits/entities/visit.entity';
     }),
     LinksModule,
     VisitsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
