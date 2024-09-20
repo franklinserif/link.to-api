@@ -1,7 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { VisitsService } from './visits.service';
-import { CreateVisitDto } from './dto/create-visit.dto';
-import { UpdateVisitDto } from './dto/update-visit.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { VisitsService } from '@visits/visits.service';
+import { CreateVisitDto, UpdateVisitDto } from '@visits/dto';
 
 @Controller('visits')
 export class VisitsController {
