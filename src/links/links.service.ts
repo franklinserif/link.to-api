@@ -9,6 +9,8 @@ import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from '@links/entities/link.entity';
 import { shortenURL } from '@libs/link';
+import { Visit } from '@visits/entities/visit.entity';
+import { VisitsService } from '@visits/visits.service';
 
 @Injectable()
 export class LinksService {
@@ -17,13 +19,25 @@ export class LinksService {
   constructor(
     @InjectRepository(Link)
     private readonly linksRepository: Repository<Link>,
+    private readonly visitsService: VisitsService,
   ) {}
 
-  async findOriginalUrl(shortURL: string) {
+  async findOriginalUrl(shortURL: string, visitor: VisitorInformation) {
     try {
       const link = await this.linksRepository.findOne({ where: { shortURL } });
 
       if (!link?.id) throw new NotFoundException('link not found');
+
+      const { userAgent, geo } = visitor;
+
+      await this.visitsService.create({
+        os: userAgent.os.name,
+        browser: userAgent.browser,
+        country: geo.country,
+        location: geo.location,
+        ip: geo.ip,
+        link,
+      });
 
       return link;
     } catch (error) {
