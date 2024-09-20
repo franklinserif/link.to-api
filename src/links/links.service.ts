@@ -1,26 +1,104 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLinkDto } from './dto/create-link.dto';
-import { UpdateLinkDto } from './dto/update-link.dto';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Link } from '@links/entities/link.entity';
+import { shortenURL } from '@libs/link';
 
 @Injectable()
 export class LinksService {
-  create(createLinkDto: CreateLinkDto) {
-    return 'This action adds a new link';
+  private readonly logger: Logger = new Logger(LinksService.name);
+
+  constructor(
+    @InjectRepository(Link)
+    private readonly linksRepository: Repository<Link>,
+  ) {}
+
+  async create(createLinkDto: CreateLinkDto) {
+    try {
+      let shortURL = shortenURL();
+      let shortUrlExist = true;
+
+      while (shortUrlExist) {
+        const sameShortLink = await this.linksRepository.findOne({
+          where: { shortURL },
+        });
+
+        if (!sameShortLink?.id) {
+          shortUrlExist = false;
+        } else {
+          shortURL = shortenURL();
+        }
+      }
+
+      const link = this.linksRepository.create({
+        ...createLinkDto,
+        shortURL,
+      });
+
+      await this.linksRepository.save(link);
+
+      return link;
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 
-  findAll() {
-    return `This action returns all links`;
+  async findAll() {
+    try {
+      return await this.linksRepository.find();
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} link`;
+  async findOne(id: string) {
+    try {
+      return await this.linksRepository.findOne({ where: { id } });
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 
-  update(id: number, updateLinkDto: UpdateLinkDto) {
-    return `This action updates a #${id} link`;
+  async update(id: string, updateLinkDto: UpdateLinkDto) {
+    try {
+      let shortURL = shortenURL();
+
+      let shortUrlExist = true;
+
+      while (shortUrlExist) {
+        const sameShortLink = await this.linksRepository.findOne({
+          where: { shortURL },
+        });
+
+        if (!sameShortLink?.id) {
+          shortUrlExist = false;
+        } else {
+          shortURL = shortenURL();
+        }
+      }
+
+      const link = await this.linksRepository.findOneBy({ id });
+
+      link.urlOriginal = updateLinkDto.urlOriginal;
+      link.shortURL = shortURL;
+
+      return await this.linksRepository.save(link);
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} link`;
+  async remove(id: string) {
+    try {
+      return await this.linksRepository.delete(id);
+    } catch (error) {
+      this.logger.error(error.details);
+      throw new BadRequestException(error.details);
+    }
   }
 }
