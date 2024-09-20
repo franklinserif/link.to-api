@@ -8,10 +8,9 @@ import {
   Delete,
   Res,
 } from '@nestjs/common';
-import { LinksService } from './links.service';
-import { CreateLinkDto } from './dto/create-link.dto';
-import { UpdateLinkDto } from './dto/update-link.dto';
 import { Response } from 'express';
+import { LinksService } from '@links/links.service';
+import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 
 @Controller('links')
 export class LinksController {
