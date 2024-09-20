@@ -1,5 +1,6 @@
 import { User } from '@users/entities/user.entity';
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -22,9 +23,29 @@ export class Link {
   @ManyToOne(() => User, (users) => users.links, { nullable: true })
   user: User;
 
+  @Column({ default: true })
+  status: boolean;
+
+  @Column()
+  expirationDate: Date;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @BeforeInsert()
+  setExpirationDate() {
+    const currentDate = new Date();
+    if (this.user) {
+      this.expirationDate = new Date(
+        currentDate.setMonth(currentDate.getMonth() + 3),
+      );
+    } else {
+      this.expirationDate = new Date(
+        currentDate.setDate(currentDate.getDate() + 30),
+      );
+    }
+  }
 }
