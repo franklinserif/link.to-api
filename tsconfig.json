@@ -23,7 +23,8 @@
       "@shared/*": ["shared/*"],
       "@users/*": ["users/*"],
       "@links/*": ["links/*"],
-      "@visits/*": ["visits/*"]
+      "@visits/*": ["visits/*"],
+      "@auth/*": ["auth/*"]
     }
   }
 }
