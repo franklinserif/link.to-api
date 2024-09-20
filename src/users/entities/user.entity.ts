@@ -1,8 +1,10 @@
+import { Link } from '@links/entities/link.entity';
 import {
   BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,6 +28,9 @@ export class User {
 
   @Column({ type: 'text', nullable: false, select: false })
   password: string;
+
+  @OneToMany(() => Link, (links) => links.user)
+  links: Link[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
