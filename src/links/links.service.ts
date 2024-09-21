@@ -105,6 +105,10 @@ export class LinksService {
 
   async remove(id: string) {
     try {
+      const link = await this.linksRepository.findOne({ where: { id } });
+      if (!link?.id)
+        throw new NotFoundException(`link with id ${id} doesn't exist`);
+
       return await this.linksRepository.delete(id);
     } catch (error) {
       this.logger.error(error.details);
