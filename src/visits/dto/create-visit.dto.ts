@@ -1,5 +1,5 @@
 import { Link } from '@links/entities/link.entity';
-import { IsIP, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsIP, IsOptional, IsString } from 'class-validator';
 
 export class CreateVisitDto {
   @IsString()
