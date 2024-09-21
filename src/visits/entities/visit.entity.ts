@@ -28,7 +28,7 @@ export class Visit {
   @Column()
   os: string;
 
-  @ManyToOne(() => Link, (link) => link.visits)
+  @ManyToOne(() => Link, (link) => link.visits, { onDelete: 'CASCADE' })
   link: Link;
 
   @CreateDateColumn({ type: 'timestamp' })

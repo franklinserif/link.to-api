@@ -31,7 +31,9 @@ export class Link {
   @ManyToOne(() => User, (users) => users.links, { nullable: true })
   user: User;
 
-  @OneToMany(() => Visit, (visits) => visits.link)
+  @OneToMany(() => Visit, (visits) => visits.link, {
+    onDelete: 'CASCADE',
+  })
   visits: Visit[];
 
   @CreateDateColumn({ type: 'timestamp' })
