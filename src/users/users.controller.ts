@@ -1,23 +1,19 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '@users/users.service';
-import { CreateUserDto, UpdateUserDto } from '@users/dto';
+import { UpdateUserDto } from '@users/dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
-  }
 
   @Get()
   async findAll() {
@@ -25,16 +21,19 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard())
   async findOne(@Param('id') id: string) {
     return await this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   async remove(@Param('id') id: string) {
     return await this.usersService.remove(id);
   }
