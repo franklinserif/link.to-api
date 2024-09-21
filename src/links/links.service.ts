@@ -9,8 +9,8 @@ import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from '@links/entities/link.entity';
 import { shortenURL } from '@libs/link';
-import { Visit } from '@visits/entities/visit.entity';
 import { VisitsService } from '@visits/visits.service';
+import { User } from '@users/entities/user.entity';
 
 @Injectable()
 export class LinksService {
@@ -46,14 +46,20 @@ export class LinksService {
     }
   }
 
-  async create(createLinkDto: CreateLinkDto) {
+  async create(createLinkDto: CreateLinkDto, user: User | undefined) {
     try {
       const shortURL = await this.generateShortURL();
 
-      const link = this.linksRepository.create({
+      let newLink: any = {
         ...createLinkDto,
         shortURL,
-      });
+      };
+
+      if (user?.id) {
+        newLink = { ...newLink, user: user };
+      }
+
+      const link = this.linksRepository.create(newLink);
 
       await this.linksRepository.save(link);
 
