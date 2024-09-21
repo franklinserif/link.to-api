@@ -8,11 +8,13 @@ import {
   Delete,
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { LinksService } from '@links/links.service';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { getVisitorInformation } from '@libs/visitor';
+import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { User } from '@users/entities/user.entity';
 
@@ -29,8 +31,9 @@ export class LinksController {
   }
 
   @Get()
-  findAll() {
-    return this.linksService.findAll();
+  @UseGuards(AuthGuard())
+  async findAll() {
+    return await this.linksService.findAll();
   }
 
   @Get(':id')
@@ -53,12 +56,14 @@ export class LinksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
-    return this.linksService.update(id, updateLinkDto);
+  @UseGuards(AuthGuard())
+  async update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
+    return await this.linksService.update(id, updateLinkDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.linksService.remove(id);
+  @UseGuards(AuthGuard())
+  async remove(@Param('id') id: string) {
+    return await this.linksService.remove(id);
   }
 }
