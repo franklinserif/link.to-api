@@ -27,13 +27,13 @@ export class LinksController {
     @Body() createLinkDto: CreateLinkDto,
     @GetUser() user: User | undefined,
   ) {
-    return await this.linksService.create(createLinkDto, user);
+    return this.linksService.create(createLinkDto, user);
   }
 
   @Get()
   @UseGuards(AuthGuard())
   async findAll() {
-    return await this.linksService.findAll();
+    return this.linksService.findAll();
   }
 
   @Get(':id')
@@ -58,12 +58,12 @@ export class LinksController {
   @Patch(':id')
   @UseGuards(AuthGuard())
   async update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
-    return await this.linksService.update(id, updateLinkDto);
+    return this.linksService.update(id, updateLinkDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard())
   async remove(@Param('id') id: string) {
-    return await this.linksService.remove(id);
+    return this.linksService.remove(id);
   }
 }
