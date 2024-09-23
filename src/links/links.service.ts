@@ -1,11 +1,10 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from '@links/entities/link.entity';
@@ -39,6 +38,11 @@ export class LinksService {
       throw new InternalServerErrorException(error.detail);
     }
   }
+
+  async findOriginalUrl(
+    shortURL: string,
+    visitor: VisitorInformation,
+  ): Promise<Link> {
     try {
       const link = await this.linksRepository.findOne({ where: { shortURL } });
 
@@ -62,24 +66,25 @@ export class LinksService {
     }
   }
 
-  async create(createLinkDto: CreateLinkDto, user: User | undefined) {
+  async create(
+    createLinkDto: CreateLinkDto,
+    user: User | undefined,
+  ): Promise<Link> {
     try {
       const shortURL = await this.generateShortURL();
 
-      let newLink: any = {
+      let newLink = {
         ...createLinkDto,
         shortURL,
-      };
+      } as Link;
 
       if (user?.id) {
-        newLink = { ...newLink, user: user };
+        newLink = { ...newLink, user: user } as Link;
       }
 
       const link = this.linksRepository.create(newLink);
 
-      await this.linksRepository.save(link);
-
-      return link;
+      return await this.linksRepository.save(link);
     } catch (error) {
       this.logger.error('Failed to create link ', error.detail);
       throw new InternalServerErrorException(
@@ -89,7 +94,7 @@ export class LinksService {
     }
   }
 
-  async update(id: string, updateLinkDto: UpdateLinkDto) {
+  async update(id: string, updateLinkDto: UpdateLinkDto): Promise<Link> {
     try {
       const shortURL = await this.generateShortURL();
 
@@ -108,7 +113,7 @@ export class LinksService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<DeleteResult> {
     try {
       const link = await this.linksRepository.findOne({ where: { id } });
       if (!link?.id)
@@ -124,23 +129,24 @@ export class LinksService {
     }
   }
 
-  private async generateShortURL() {
-    let shortURL = shortenURL();
-    let shortUrlExist = true;
+  private async generateShortURL(): Promise<string> {
+    try {
+      let shortURL = shortenURL();
+      let shortUrlExist = true;
 
-    while (shortUrlExist) {
-      const sameShortLink = await this.linksRepository.findOne({
-        where: { shortURL },
-      });
+      while (shortUrlExist) {
+        const sameShortLink = await this.linksRepository.findOne({
+          where: { shortURL },
+        });
 
-      if (!sameShortLink?.id) {
-        shortUrlExist = false;
-      } else {
-        shortURL = shortenURL();
+        if (!sameShortLink?.id) {
+          shortUrlExist = false;
+        } else {
+          shortURL = shortenURL();
+        }
       }
-    }
 
-    return shortURL;
+      return shortURL;
     } catch (error) {
       this.logger.error('Failed to generate short link ', error.detail);
       throw new InternalServerErrorException(
@@ -157,9 +163,9 @@ export class LinksService {
       return link;
     }
     try {
-    link.status = false;
-    await this.linksRepository.save(link);
-    return link;
+      link.status = false;
+      await this.linksRepository.save(link);
+      return link;
     } catch (error) {
       this.logger.error('Failed to check expire date ', error.detail);
       throw new InternalServerErrorException(
