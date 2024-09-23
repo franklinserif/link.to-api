@@ -7,16 +7,16 @@ import {
   Param,
   Delete,
   Res,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { LinksService } from '@links/links.service';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
-import { getVisitorInformation } from '@libs/visitor';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { User } from '@users/entities/user.entity';
+import { VisitorInformation } from '@shared/interfaces/visitor';
+import { GetVisitor } from '@visits/decorators/get-visitor.decorator';
 
 @Controller('links')
 export class LinksController {
@@ -39,14 +39,10 @@ export class LinksController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @Req() req: Request,
+    @GetVisitor() visitor: VisitorInformation,
     @Res() res: Response,
   ) {
-    const visitorImformation = await getVisitorInformation(req);
-    const link = await this.linksService.findOriginalUrl(
-      id,
-      visitorImformation,
-    );
+    const link = await this.linksService.findOriginalUrl(id, visitor);
 
     if (!link.status) {
       return res.status(404).redirect('/');
