@@ -4,6 +4,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { SignInDto } from './dto';
+import { UnauthorizedException } from '@nestjs/common';
+import { CreateUserDto } from '@users/dto';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -14,6 +16,15 @@ describe('AuthController', () => {
       signIn: jest.fn().mockResolvedValue({
         accessToken: 'test-access-token',
         refreshToken: 'test-refresh-token',
+      }),
+      signUp: jest.fn().mockResolvedValue({
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+        user: { id: 1, username: 'newuser' },
+      }),
+      refreshToken: jest.fn().mockResolvedValue({
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
       }),
     };
 
@@ -56,7 +67,7 @@ describe('AuthController', () => {
       'test-refresh-token',
       {
         httpOnly: true,
-        secure: false, // based on mock ConfigService returning 'development'
+        secure: false,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       },
@@ -67,10 +78,10 @@ describe('AuthController', () => {
   });
 
   it('should call signUp and return accessToken and user', async () => {
-    const createUserDto = {
+    const createUserDto: CreateUserDto = {
       username: 'johnDoe',
       password: '*Jd12345678',
-      email: 'johnDoe',
+      email: 'johnDoe@example.com',
       firstName: 'John',
       lastName: 'Doe',
     };
@@ -78,14 +89,6 @@ describe('AuthController', () => {
       cookie: jest.fn(),
       send: jest.fn(),
     } as unknown as Response;
-
-    const mockUser = { id: 1, username: 'newuser' };
-
-    authService.signUp = jest.fn().mockResolvedValue({
-      accessToken: 'new-access-token',
-      refreshToken: 'new-refresh-token',
-      user: mockUser,
-    });
 
     await controller.signUp(createUserDto, mockResponse);
 
@@ -102,7 +105,46 @@ describe('AuthController', () => {
     );
     expect(mockResponse.send).toHaveBeenCalledWith({
       accessToken: 'new-access-token',
-      user: mockUser,
+      user: { id: 1, username: 'newuser' },
     });
+  });
+
+  it('should call refreshToken and return new accessToken', async () => {
+    const mockResponse = {
+      cookie: jest.fn(),
+      send: jest.fn(),
+    } as unknown as Response;
+
+    await controller.refreshToken('test-refresh-token', mockResponse);
+
+    expect(authService.refreshToken).toHaveBeenCalledWith('test-refresh-token');
+    expect(mockResponse.cookie).toHaveBeenCalledWith(
+      'refreshToken',
+      'new-refresh-token',
+      {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      },
+    );
+    expect(mockResponse.send).toHaveBeenCalledWith({
+      accessToken: 'new-access-token',
+    });
+  });
+
+  it('should throw UnauthorizedException on refreshToken failure', async () => {
+    const mockResponse = {
+      cookie: jest.fn(),
+      send: jest.fn(),
+    } as unknown as Response;
+
+    jest
+      .spyOn(authService, 'refreshToken')
+      .mockRejectedValue(new UnauthorizedException());
+
+    await expect(
+      controller.refreshToken('invalid-refresh-token', mockResponse),
+    ).rejects.toThrow(UnauthorizedException);
   });
 });

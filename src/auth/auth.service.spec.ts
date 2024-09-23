@@ -9,6 +9,8 @@ import * as encrypt from '@libs/encrypt';
 describe('AuthService', () => {
   let service: AuthService;
   let usersRepository: Repository<User>;
+  let jwtService: JwtService;
+
   const USERS_REPOSITORY_TOKEN = getRepositoryToken(User);
   const dbMockUser: User = {
     id: '1223423',
@@ -55,7 +57,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     usersRepository = module.get<Repository<User>>(USERS_REPOSITORY_TOKEN);
-
+    jwtService = module.get<JwtService>(JwtService);
     jest
       .spyOn(encrypt, 'encryptPassword')
       .mockResolvedValue('hashPassword123*qdw');
@@ -85,5 +87,14 @@ describe('AuthService', () => {
     });
 
     expect(usersRepository.create).toHaveReturnedWith(dbMockUser);
+  });
+
+  it('should return tokens', async () => {
+    jest.spyOn(usersRepository, 'findOne').mockResolvedValue(dbMockUser);
+
+    const tokens = await service.refreshToken('refresh-token');
+
+    expect(jwtService.verifyAsync).toHaveBeenCalledWith('refresh-token');
+    expect(tokens).toBeDefined();
   });
 });
