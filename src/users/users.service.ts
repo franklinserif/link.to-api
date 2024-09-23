@@ -1,7 +1,10 @@
+import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
+} from '@nestjs/common';
+import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
@@ -15,7 +18,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     try {
       const users = await this.userRepository.find();
 
@@ -26,7 +29,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     try {
       const user = await this.userRepository.findOneBy({ id });
 
@@ -40,7 +43,7 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       const user = await this.userRepository.findOne({
         where: { id },
@@ -66,7 +69,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<DeleteResult> {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
