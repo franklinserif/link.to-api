@@ -1,7 +1,7 @@
 import { User } from '@users/entities/user.entity';
 
-export interface Signup {
+export interface SignupResponse {
   user: User;
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
