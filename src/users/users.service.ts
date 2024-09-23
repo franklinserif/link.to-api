@@ -5,12 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  DeleteResult,
-  EntityNotFoundError,
-  QueryFailedError,
-  Repository,
-} from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
@@ -82,7 +77,7 @@ export class UsersService {
   private handleErrors(error: any, id: string) {
     this.logger.error(error);
 
-    if (error instanceof EntityNotFoundError) {
+    if (error instanceof NotFoundException) {
       throw new NotFoundException(`User with id ${id} doesn't exist`);
     } else if (error instanceof QueryFailedError) {
       throw new BadRequestException('Most provide a valid id');
