@@ -1,18 +1,89 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '@users/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { Repository } from 'typeorm';
+import * as encrypt from '@libs/encrypt';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let usersRepository: Repository<User>;
+  const USERS_REPOSITORY_TOKEN = getRepositoryToken(User);
+  const dbMockUser: User = {
+    id: '1223423',
+    username: 'johnDoe',
+    firstName: 'john',
+    lastName: 'doe',
+    email: 'johndoe@gmail.com',
+    password: 'hashPassword123*qdw',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    links: null,
+    checkProperties: jest.fn(),
+  };
+
+  const user = {
+    username: 'johnDoe',
+    firstName: 'john',
+    lastName: 'doe',
+    email: 'johndoe@gmail.com',
+    password: '*Fr04126674413',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [
+        AuthService,
+        {
+          provide: JwtService,
+          useValue: {
+            signAsync: jest.fn().mockResolvedValue('fake-jwt-token'),
+            verifyAsync: jest.fn().mockResolvedValue({ id: '1223423' }),
+          },
+        },
+        {
+          provide: USERS_REPOSITORY_TOKEN,
+          useValue: {
+            create: jest.fn(() => dbMockUser),
+            save: jest.fn(),
+            findOne: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    usersRepository = module.get<Repository<User>>(USERS_REPOSITORY_TOKEN);
+
+    jest
+      .spyOn(encrypt, 'encryptPassword')
+      .mockResolvedValue('hashPassword123*qdw');
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('usersRepository should be defined', () => {
+    expect(usersRepository).toBeDefined();
+  });
+
+  it('should create new user with encoded password', async () => {
+    const password = '*Fr04126674413';
+    await service.signUp(user);
+
+    expect(encrypt.encryptPassword).toHaveBeenCalledWith(password);
+  });
+
+  it('shoul call userRepository.create with correct params', async () => {
+    await service.signUp(user);
+
+    expect(usersRepository.create).toHaveBeenCalledWith({
+      ...user,
+      password: 'hashPassword123*qdw',
+    });
+
+    expect(usersRepository.create).toHaveReturnedWith(dbMockUser);
   });
 });
