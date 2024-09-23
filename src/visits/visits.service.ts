@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateVisitDto, UpdateVisitDto } from '@visits/dto';
+import { CreateVisitDto } from '@visits/dto';
 import { Visit } from '@visits/entities/visit.entity';
 import { Repository } from 'typeorm';
 @Injectable()
