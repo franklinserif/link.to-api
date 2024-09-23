@@ -11,7 +11,7 @@ export class VisitsService {
     private readonly visitsRepository: Repository<Visit>,
   ) {}
 
-  async create(createVisitDto: CreateVisitDto) {
+  async create(createVisitDto: CreateVisitDto): Promise<Visit> {
     try {
       const visitor = this.visitsRepository.create(createVisitDto);
 
