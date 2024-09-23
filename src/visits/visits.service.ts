@@ -18,8 +18,8 @@ export class VisitsService {
       await this.visitsRepository.save(visitor);
       return visitor;
     } catch (error) {
-      this.logger.error(`Failed to create visit`, error);
-      throw new BadRequestException(`Failed to create visit`, error);
+      this.logger.error(error);
+      throw new BadRequestException(`Failed to create visit`);
     }
   }
 }

@@ -36,7 +36,7 @@ export class LinksService {
       return updatedLinks;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('cannot find links', error);
+      throw new InternalServerErrorException('cannot find links');
     }
   }
 
@@ -63,7 +63,7 @@ export class LinksService {
       return link;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('cannot find original url', error);
+      throw new InternalServerErrorException('cannot find original url');
     }
   }
 
@@ -87,8 +87,8 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error('Failed to create link ', error);
-      throw new InternalServerErrorException('Failed to create link ', error);
+      this.logger.error(error);
+      throw new InternalServerErrorException('Failed to create link');
     }
   }
 
@@ -98,13 +98,22 @@ export class LinksService {
 
       const link = await this.linksRepository.findOneBy({ id });
 
+      if (!link?.id) {
+        throw new NotFoundException(`link with id ${id} doesn't exist`);
+      }
+
       link.urlOriginal = updateLinkDto.urlOriginal;
       link.shortURL = shortURL;
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error('Failed to update link ', error);
-      throw new InternalServerErrorException('Failed to update link ', error);
+      this.logger.error(error);
+
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error);
+      }
+
+      throw new InternalServerErrorException('Failed to update link');
     }
   }
 
@@ -116,8 +125,13 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      this.logger.error('Failed to delete link ', error);
-      throw new InternalServerErrorException('Failed to delete link ', error);
+      this.logger.error(error);
+
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error);
+      }
+
+      throw new InternalServerErrorException('Failed to delete link');
     }
   }
 
@@ -140,11 +154,8 @@ export class LinksService {
 
       return shortURL;
     } catch (error) {
-      this.logger.error('Failed to generate short link ', error);
-      throw new InternalServerErrorException(
-        'Failed to generate short link ',
-        error,
-      );
+      this.logger.error(error);
+      throw new InternalServerErrorException('Failed to generate short link');
     }
   }
 
@@ -159,11 +170,8 @@ export class LinksService {
       await this.linksRepository.save(link);
       return link;
     } catch (error) {
-      this.logger.error('Failed to check expire date ', error);
-      throw new InternalServerErrorException(
-        'Failed to check expire date ',
-        error,
-      );
+      this.logger.error(error);
+      throw new InternalServerErrorException('Failed to check expire date');
     }
   }
 }

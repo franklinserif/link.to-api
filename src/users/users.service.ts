@@ -1,10 +1,16 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, Repository } from 'typeorm';
+import {
+  DeleteResult,
+  EntityNotFoundError,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
@@ -25,7 +31,7 @@ export class UsersService {
       return users;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('cannot find users', error);
+      throw new InternalServerErrorException('cannot find users');
     }
   }
 
@@ -33,16 +39,13 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOneBy({ id });
 
-      if (!user)
+      if (!user) {
         throw new NotFoundException(`User with id ${id} doesn't exist`);
+      }
 
       return user;
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException(
-        `can't find user with id ${id}`,
-        error,
-      );
+      this.handleErrors(error, id);
     }
   }
 
@@ -52,7 +55,7 @@ export class UsersService {
         where: { id },
       });
 
-      if (!user?.id) {
+      if (!Boolean(user)) {
         throw new NotFoundException(`User with id ${id} doesn't exist`);
       }
 
@@ -64,11 +67,7 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      this.logger.error(`Failed to update user with id ${id}`, error);
-      throw new InternalServerErrorException(
-        `Failed to update user with id ${id}`,
-        error,
-      );
+      this.handleErrors(error, id);
     }
   }
 
@@ -76,11 +75,19 @@ export class UsersService {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
-      this.logger.error(`Failed to delete user with id ${id} `, error);
-      throw new InternalServerErrorException(
-        `Failed to delete user with id ${id} `,
-        error,
-      );
+      this.handleErrors(error, id);
     }
+  }
+
+  private handleErrors(error: any, id: string) {
+    this.logger.error(error);
+
+    if (error instanceof EntityNotFoundError) {
+      throw new NotFoundException(`User with id ${id} doesn't exist`);
+    } else if (error instanceof QueryFailedError) {
+      throw new BadRequestException('Most provide a valid id');
+    }
+
+    throw new InternalServerErrorException();
   }
 }

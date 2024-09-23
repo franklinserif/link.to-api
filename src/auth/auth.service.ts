@@ -1,11 +1,13 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '@users/dto';
 import { SignInDto } from '@auth/dto';
@@ -46,7 +48,16 @@ export class AuthService {
       return await this.createTokens(user);
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('cannot signin ', error);
+
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException(`User doesn't exist`);
+      } else if (error instanceof QueryFailedError) {
+        throw new BadRequestException('Most provide a valid id');
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error);
+      }
+
+      throw new InternalServerErrorException();
     }
   }
 
@@ -69,7 +80,7 @@ export class AuthService {
       };
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('cannot sign up ', error);
+      throw new InternalServerErrorException('Failed to create account');
     }
   }
 
@@ -87,13 +98,9 @@ export class AuthService {
 
       return { accessToken, refreshToken };
     } catch (error) {
-      this.logger.error(
-        'Failed to create access token and refresh token ',
-        error,
-      );
-      throw new UnauthorizedException(
-        'Failed to create access token and refresh token ',
-        error,
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        'Failed to create access token and refresh token',
       );
     }
   }
@@ -106,12 +113,21 @@ export class AuthService {
         where: { id: payload?.id },
       });
 
+      if (!user) {
+        throw new NotFoundException(`user with id ${payload.id} doesn't exist`);
+      }
+
       const tokens = await this.createTokens(user);
 
       return tokens;
     } catch (error) {
       this.logger.error(error);
-      throw new UnauthorizedException('Failed to create new tokens ', error);
+
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error);
+      }
+
+      throw new InternalServerErrorException('Failed to create new tokens');
     }
   }
 }
