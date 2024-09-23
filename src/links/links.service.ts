@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -41,8 +42,8 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.logger.error(error.details);
-      throw new BadRequestException(error.details);
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error.detail);
     }
   }
 
@@ -65,25 +66,11 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.logger.error(error.details);
-      throw new BadRequestException(error.details);
-    }
-  }
-
-  async findAll() {
-    try {
-      const links = await this.linksRepository.find();
-      let updatedLinks: Link[] = [];
-
-      for (const link of links) {
-        const updatedLink = await this.checkExpireDate(link);
-        updatedLinks.push(updatedLink);
-      }
-
-      return updatedLinks;
-    } catch (error) {
-      this.logger.error(error.details);
-      throw new BadRequestException(error.details);
+      this.logger.error('Failed to create link ', error.detail);
+      throw new InternalServerErrorException(
+        'Failed to create link ',
+        error.detail,
+      );
     }
   }
 
@@ -98,8 +85,11 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error(error.details);
-      throw new BadRequestException(error.details);
+      this.logger.error('Failed to update link ', error.detail);
+      throw new InternalServerErrorException(
+        'Failed to update link ',
+        error.detail,
+      );
     }
   }
 
@@ -111,8 +101,11 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      this.logger.error(error.details);
-      throw new BadRequestException(error.details);
+      this.logger.error('Failed to delete link ', error.detail);
+      throw new InternalServerErrorException(
+        'Failed to delete link ',
+        error.detail,
+      );
     }
   }
 
@@ -133,6 +126,13 @@ export class LinksService {
     }
 
     return shortURL;
+    } catch (error) {
+      this.logger.error('Failed to generate short link ', error.detail);
+      throw new InternalServerErrorException(
+        'Failed to generate short link ',
+        error.detail,
+      );
+    }
   }
 
   private async checkExpireDate(link: Link): Promise<Link> {
@@ -141,9 +141,16 @@ export class LinksService {
     if (link.expirationDate > currentDate) {
       return link;
     }
-
+    try {
     link.status = false;
     await this.linksRepository.save(link);
     return link;
+    } catch (error) {
+      this.logger.error('Failed to check expire date ', error.detail);
+      throw new InternalServerErrorException(
+        'Failed to check expire date ',
+        error.detail,
+      );
+    }
   }
 }
