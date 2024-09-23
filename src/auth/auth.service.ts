@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -48,8 +48,8 @@ export class AuthService {
         token,
       };
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error);
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error.detail);
     }
   }
 
@@ -71,8 +71,8 @@ export class AuthService {
         token,
       };
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error);
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error.detail);
     }
   }
 }
