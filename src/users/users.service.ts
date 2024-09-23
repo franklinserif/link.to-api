@@ -24,8 +24,8 @@ export class UsersService {
 
       return users;
     } catch (error) {
-      this.logger.error(error.detail);
-      throw new InternalServerErrorException(error?.detail);
+      this.logger.error(error);
+      throw new InternalServerErrorException('cannot find users', error);
     }
   }
 
@@ -38,8 +38,11 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      this.logger.error(error.detail);
-      throw new InternalServerErrorException(error.detail);
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        `can't find user with id ${id}`,
+        error,
+      );
     }
   }
 
@@ -61,10 +64,10 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      this.logger.error(`Failed to update user with id ${id}`, error.detail);
+      this.logger.error(`Failed to update user with id ${id}`, error);
       throw new InternalServerErrorException(
         `Failed to update user with id ${id}`,
-        error.detail,
+        error,
       );
     }
   }
@@ -76,7 +79,7 @@ export class UsersService {
       this.logger.error(`Failed to delete user with id ${id} `, error);
       throw new InternalServerErrorException(
         `Failed to delete user with id ${id} `,
-        error?.detail,
+        error,
       );
     }
   }

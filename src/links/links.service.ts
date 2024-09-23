@@ -35,8 +35,8 @@ export class LinksService {
 
       return updatedLinks;
     } catch (error) {
-      this.logger.error(error.detail);
-      throw new InternalServerErrorException(error.detail);
+      this.logger.error(error);
+      throw new InternalServerErrorException('cannot find links', error);
     }
   }
 
@@ -62,8 +62,8 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.logger.error(error.detail);
-      throw new InternalServerErrorException(error.detail);
+      this.logger.error(error);
+      throw new InternalServerErrorException('cannot find original url', error);
     }
   }
 
@@ -87,11 +87,8 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error('Failed to create link ', error.detail);
-      throw new InternalServerErrorException(
-        'Failed to create link ',
-        error.detail,
-      );
+      this.logger.error('Failed to create link ', error);
+      throw new InternalServerErrorException('Failed to create link ', error);
     }
   }
 
@@ -106,11 +103,8 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error('Failed to update link ', error.detail);
-      throw new InternalServerErrorException(
-        'Failed to update link ',
-        error.detail,
-      );
+      this.logger.error('Failed to update link ', error);
+      throw new InternalServerErrorException('Failed to update link ', error);
     }
   }
 
@@ -122,11 +116,8 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      this.logger.error('Failed to delete link ', error.detail);
-      throw new InternalServerErrorException(
-        'Failed to delete link ',
-        error.detail,
-      );
+      this.logger.error('Failed to delete link ', error);
+      throw new InternalServerErrorException('Failed to delete link ', error);
     }
   }
 
@@ -149,10 +140,10 @@ export class LinksService {
 
       return shortURL;
     } catch (error) {
-      this.logger.error('Failed to generate short link ', error.detail);
+      this.logger.error('Failed to generate short link ', error);
       throw new InternalServerErrorException(
         'Failed to generate short link ',
-        error.detail,
+        error,
       );
     }
   }
@@ -168,10 +159,10 @@ export class LinksService {
       await this.linksRepository.save(link);
       return link;
     } catch (error) {
-      this.logger.error('Failed to check expire date ', error.detail);
+      this.logger.error('Failed to check expire date ', error);
       throw new InternalServerErrorException(
         'Failed to check expire date ',
-        error.detail,
+        error,
       );
     }
   }

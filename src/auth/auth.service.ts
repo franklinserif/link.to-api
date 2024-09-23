@@ -45,7 +45,7 @@ export class AuthService {
 
       return await this.createTokens(user);
     } catch (error) {
-      this.logger.error(error.detail);
+      this.logger.error(error);
       throw new InternalServerErrorException('cannot signin ', error);
     }
   }
