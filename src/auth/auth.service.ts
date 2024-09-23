@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '@users/dto';
 import { SignInDto } from '@auth/dto';
 import { User } from '@users/entities/user.entity';
+import { Signin, Signup } from '@auth/interfaces';
 import { comparePassword, encryptPassword } from '@libs/encrypt';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto) {
+  async signIn(signInDto: SignInDto): Promise<Signin> {
     try {
       const user = await this.usersRepsitory.findOne({
         where: { username: signInDto.username.toLocaleLowerCase().trim() },
@@ -46,6 +47,7 @@ export class AuthService {
 
       return {
         token,
+        refreshToken: '',
       };
     } catch (error) {
       this.logger.error(error.detail);
@@ -53,7 +55,7 @@ export class AuthService {
     }
   }
 
-  async signUp(createUserDto: CreateUserDto) {
+  async signUp(createUserDto: CreateUserDto): Promise<Signup> {
     const { password, ...userDetails } = createUserDto;
 
     try {
@@ -69,6 +71,7 @@ export class AuthService {
       return {
         user,
         token,
+        refreshToken: '',
       };
     } catch (error) {
       this.logger.error(error.detail);
