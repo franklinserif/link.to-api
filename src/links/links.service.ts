@@ -11,6 +11,7 @@ import { Link } from '@links/entities/link.entity';
 import { shortenURL } from '@libs/link';
 import { VisitsService } from '@visits/visits.service';
 import { User } from '@users/entities/user.entity';
+import { VisitorInformation } from '@shared/interfaces/visitor';
 
 @Injectable()
 export class LinksService {
@@ -25,7 +26,7 @@ export class LinksService {
   async findAll(): Promise<Link[]> {
     try {
       const links = await this.linksRepository.find();
-      let updatedLinks: Link[] = [];
+      const updatedLinks: Link[] = [];
 
       for (const link of links) {
         const updatedLink = await this.checkExpireDate(link);
