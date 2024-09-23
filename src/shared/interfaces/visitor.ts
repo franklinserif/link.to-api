@@ -1,4 +1,4 @@
-interface VisitorInformation {
+export interface VisitorInformation {
   geo: {
     ip: any;
     location: string;
