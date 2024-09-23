@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '@users/dto';
 import { SignInDto } from '@auth/dto';
 import { User } from '@users/entities/user.entity';
-import { Signin, Signup } from '@auth/interfaces';
+import { Tokens, SignupResponse } from '@auth/interfaces';
 import { comparePassword, encryptPassword } from '@libs/encrypt';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto): Promise<Signin> {
+  async signIn(signInDto: SignInDto): Promise<Tokens> {
     try {
       const user = await this.usersRepsitory.findOne({
         where: { username: signInDto.username.toLocaleLowerCase().trim() },
@@ -43,19 +43,14 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect user password');
       }
 
-      const token = await this.jwtService.signAsync({ id: user.id });
-
-      return {
-        token,
-        refreshToken: '',
-      };
+      return await this.createTokens(user);
     } catch (error) {
       this.logger.error(error.detail);
-      throw new InternalServerErrorException(error.detail);
+      throw new InternalServerErrorException('cannot signin ', error);
     }
   }
 
-  async signUp(createUserDto: CreateUserDto): Promise<Signup> {
+  async signUp(createUserDto: CreateUserDto): Promise<SignupResponse> {
     const { password, ...userDetails } = createUserDto;
 
     try {
@@ -66,16 +61,57 @@ export class AuthService {
       });
 
       await this.usersRepsitory.save(user);
-      const token = await this.jwtService.signAsync({ id: user.id });
+      const tokens = await this.createTokens(user);
 
       return {
         user,
-        token,
-        refreshToken: '',
+        ...tokens,
       };
     } catch (error) {
-      this.logger.error(error.detail);
-      throw new InternalServerErrorException(error.detail);
+      this.logger.error(error);
+      throw new InternalServerErrorException('cannot sign up ', error);
+    }
+  }
+
+  private async createTokens(user: User): Promise<Tokens> {
+    try {
+      const payload = { id: user.id };
+
+      const accessToken = await this.jwtService.signAsync(payload, {
+        expiresIn: '15m',
+      });
+
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+      });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      this.logger.error(
+        'Failed to create access token and refresh token ',
+        error,
+      );
+      throw new UnauthorizedException(
+        'Failed to create access token and refresh token ',
+        error,
+      );
+    }
+  }
+
+  async refreshToken(refreshToken: string | undefined): Promise<Tokens> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken);
+
+      const user = await this.usersRepsitory.findOne({
+        where: { id: payload?.id },
+      });
+
+      const tokens = await this.createTokens(user);
+
+      return tokens;
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnauthorizedException('Failed to create new tokens ', error);
     }
   }
 }
