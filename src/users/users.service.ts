@@ -1,5 +1,7 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { Repository } from 'typeorm';
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
@@ -19,8 +21,8 @@ export class UsersService {
 
       return users;
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error?.details);
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error?.detail);
     }
   }
 
@@ -28,12 +30,13 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOneBy({ id });
 
-      if (!user) throw new BadRequestException(`User doesn't exist`);
+      if (!user)
+        throw new NotFoundException(`User with id ${id} doesn't exist`);
 
       return user;
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error?.details);
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error.detail);
     }
   }
 
@@ -44,7 +47,7 @@ export class UsersService {
       });
 
       if (!user?.id) {
-        throw new BadRequestException(`User doesn't exist`);
+        throw new NotFoundException(`User with id ${id} doesn't exist`);
       }
 
       if (updateUserDto?.password) {
@@ -55,8 +58,11 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error?.details);
+      this.logger.error(`Failed to update user with id ${id}`, error.detail);
+      throw new InternalServerErrorException(
+        `Failed to update user with id ${id}`,
+        error.detail,
+      );
     }
   }
 
@@ -64,8 +70,11 @@ export class UsersService {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
-      this.logger.error(error);
-      throw new BadRequestException(error?.details);
+      this.logger.error(`Failed to delete user with id ${id} `, error);
+      throw new InternalServerErrorException(
+        `Failed to delete user with id ${id} `,
+        error?.detail,
+      );
     }
   }
 }
