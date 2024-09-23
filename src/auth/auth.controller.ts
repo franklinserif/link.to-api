@@ -6,7 +6,9 @@ import { SignInDto } from '@auth/dto';
 import { CreateUserDto } from '@users/dto';
 import { PRODUCTION } from '@shared/constants/server';
 import { GetRefreshToken } from './decorators/get-refreshtoken.decorator';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -15,6 +17,9 @@ export class AuthController {
   ) {}
 
   @Post('signin')
+  @ApiOperation({ summary: 'Sign in a user' })
+  @ApiResponse({ status: 200, description: 'Successfully signed in.' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
   async signIn(@Body() credentials: SignInDto, @Res() res: Response) {
     const tokens = await this.authService.signIn(credentials);
     const { accessToken, refreshToken } = tokens;
@@ -29,6 +34,9 @@ export class AuthController {
     return res.send({ accessToken });
   }
 
+  @ApiOperation({ summary: 'Sign up a new user' })
+  @ApiResponse({ status: 201, description: 'User successfully registered.' })
+  @ApiResponse({ status: 400, description: 'Invalid input data.' })
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const result = await this.authService.signUp(createUserDto);
@@ -44,7 +52,9 @@ export class AuthController {
 
     return res.send({ accessToken, user });
   }
-
+  @ApiOperation({ summary: 'Refresh the access token' })
+  @ApiResponse({ status: 200, description: 'New access token provided.' })
+  @ApiResponse({ status: 401, description: 'Invalid refresh token.' })
   @Get('refresh-token')
   async refreshToken(
     @GetRefreshToken() refreshToken: string,

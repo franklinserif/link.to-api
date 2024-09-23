@@ -24,7 +24,6 @@ async function bootstrap() {
     .setTitle('linkto API')
     .setDescription('restfull api for linkto')
     .setVersion('1.0')
-    .addTag('linkto')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
