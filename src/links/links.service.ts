@@ -23,7 +23,22 @@ export class LinksService {
     private readonly visitsService: VisitsService,
   ) {}
 
-  async findOriginalUrl(shortURL: string, visitor: VisitorInformation) {
+  async findAll(): Promise<Link[]> {
+    try {
+      const links = await this.linksRepository.find();
+      let updatedLinks: Link[] = [];
+
+      for (const link of links) {
+        const updatedLink = await this.checkExpireDate(link);
+        updatedLinks.push(updatedLink);
+      }
+
+      return updatedLinks;
+    } catch (error) {
+      this.logger.error(error.detail);
+      throw new InternalServerErrorException(error.detail);
+    }
+  }
     try {
       const link = await this.linksRepository.findOne({ where: { shortURL } });
 
