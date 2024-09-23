@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from '@auth/auth.service';
-import { AuthController } from '@auth/auth.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from '@auth/strategies/jwt-strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtStrategy } from '@auth/strategies/jwt-strategy';
+import { AuthController } from '@auth/auth.controller';
+import { AuthService } from '@auth/auth.service';
 import { User } from '@users/entities/user.entity';
 
 @Module({
@@ -24,7 +24,7 @@ import { User } from '@users/entities/user.entity';
         return {
           secret: process.env.PASSPORT_SECRET,
           signOptions: {
-            expiresIn: '2h',
+            expiresIn: '15m',
           },
         };
       },
