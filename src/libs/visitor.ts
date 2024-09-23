@@ -3,6 +3,7 @@ import * as UAParser from 'ua-parser-js';
 import axios from 'axios';
 import { IPAPI_HOST } from '@shared/constants/ipapi';
 import { IpapiResponse } from '@shared/interfaces/ipapi';
+import { VisitorInformation } from '@shared/interfaces/visitor';
 
 function getIp(req: Request) {
   return (
@@ -29,6 +30,7 @@ async function getGeo(req: Request) {
       country: geoLocationInformation.data.country_name,
     };
   } catch (error) {
+    console.log(error);
     return { ip: ip, location: '', country: '' };
   }
 }
@@ -46,7 +48,9 @@ function getUserAgentInformation(req: Request) {
   };
 }
 
-export async function getVisitorInformation(req: Request) {
+export async function getVisitorInformation(
+  req: Request,
+): Promise<VisitorInformation> {
   return {
     geo: await getGeo(req),
     userAgent: getUserAgentInformation(req),
