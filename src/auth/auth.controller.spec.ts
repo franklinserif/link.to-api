@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { SignInDto } from './dto';
 import { UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '@users/dto';
+import { PassportModule } from '@nestjs/passport';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -29,6 +30,7 @@ describe('AuthController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       controllers: [AuthController],
       providers: [
         {

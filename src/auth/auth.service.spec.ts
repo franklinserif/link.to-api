@@ -5,6 +5,7 @@ import { User } from '@users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as encrypt from '@libs/encrypt';
+import { PassportModule } from '@nestjs/passport';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -35,6 +36,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       providers: [
         AuthService,
         {

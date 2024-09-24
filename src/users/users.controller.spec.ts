@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from '@users/dto';
+import { PassportModule } from '@nestjs/passport';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -19,6 +20,7 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       controllers: [UsersController],
       providers: [
         {
