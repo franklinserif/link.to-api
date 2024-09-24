@@ -35,8 +35,8 @@ import { AuthModule } from './auth/auth.module';
     VisitsModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
