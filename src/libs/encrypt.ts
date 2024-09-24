@@ -5,8 +5,8 @@ export async function encryptPassword(password: string) {
 }
 
 export async function comparePassword(
-  encryptedPassword: string,
   password: string,
+  encryptedPassword: string,
 ) {
-  return await bcrypt.compare(encryptedPassword, password);
+  return await bcrypt.compare(password, encryptedPassword);
 }
