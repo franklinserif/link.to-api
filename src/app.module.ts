@@ -1,15 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from '@users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from '@config/configuration';
 import { User } from '@users/entities/user.entity';
 import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
-import { LinksModule } from './links/links.module';
+import { LinksModule } from '@links/links.module';
 import { Link } from '@links/entities/link.entity';
-import { VisitsModule } from './visits/visits.module';
+import { VisitsModule } from '@visits/visits.module';
 import { Visit } from '@visits/entities/visit.entity';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from '@auth/auth.module';
 
 @Module({
   imports: [
