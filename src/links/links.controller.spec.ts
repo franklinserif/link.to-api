@@ -8,7 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 
 describe('LinksController', () => {
   let controller: LinksController;
-  let service: LinksService;
+  //let service: LinksService;
 
   beforeEach(async () => {
     const mockLinkRepository = {
@@ -39,7 +39,7 @@ describe('LinksController', () => {
     }).compile();
 
     controller = module.get<LinksController>(LinksController);
-    service = module.get<LinksService>(LinksService);
+    // service = module.get<LinksService>(LinksService);
   });
 
   it('should be defined', () => {

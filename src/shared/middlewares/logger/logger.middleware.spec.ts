@@ -1,13 +1,13 @@
 import { LoggerMiddleware } from './logger.middleware';
-import { Logger } from '@nestjs/common';
+// import { Logger } from '@nestjs/common';
 
 describe('LoggerMiddleware', () => {
   let loggerMiddleware: LoggerMiddleware;
-  let logger: Logger;
+  //let logger: Logger;
 
   beforeEach(() => {
     loggerMiddleware = new LoggerMiddleware();
-    logger = new Logger(LoggerMiddleware.name);
+    //logger = new Logger(LoggerMiddleware.name);
   });
 
   it('should be defined', () => {
