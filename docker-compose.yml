@@ -13,7 +13,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes: 
       - ./database:/var/lib/postgresql/data/pgdata
- nestjs-app:
+  nestjs-app:
     build: .
     ports:
       - ${SERVER_PORT}:3000
@@ -27,3 +27,5 @@ services:
       PASSPORT_SECRET: ${PASSPORT_SECRET}
     depends_on:
       - postgres-db
+    command: >
+      sh -c "until nc -z postgres-db 5432; do sleep 1; done; npm run build && npm run migration:run && npm run start:prod"
