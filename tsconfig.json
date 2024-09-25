@@ -24,7 +24,8 @@
       "@users/*": ["users/*"],
       "@links/*": ["links/*"],
       "@visits/*": ["visits/*"],
-      "@auth/*": ["auth/*"]
+      "@auth/*": ["auth/*"],
+      "@db/*": ["db/*"]
     }
   }
 }
