@@ -23,9 +23,9 @@ jobs:
           --memory=2g 
           --cpus=2
         env:
-          POSTGRES_DB: 'storefy_db_test'
-          POSTGRES_USER: 'franklinserif'
-          POSTGRES_PASSWORD: '1234'
+          DATABASE_NAME: 'storefy_db_test'
+          DATABASE_USER: 'franklinserif'
+          DATABASE_USER_PASSWORD: '1234'
 
     steps:
       - name: Checkout code
@@ -60,11 +60,11 @@ jobs:
         run: npm run test
         env:
           CI: true
-          POSTGRES_HOST: 127.0.0.1
-          POSTGRES_PORT: 5433
-          POSTGRES_USER: franklinserif
-          POSTGRES_PASSWORD: '1234'
-          POSTGRES_DB: storefy_db_test
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PORT: 5433
+          DATABASE_USER: franklinserif
+          DATABASE_USER_PASSWORD: '1234'
+          DATABASE_NAME: storefy_db_test
 
       - name: Create Pull Request
         if: success()
