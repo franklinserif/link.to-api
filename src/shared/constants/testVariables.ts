@@ -1,3 +1,5 @@
+import { Link } from '@links/entities/link.entity';
+
 export const USERS = [
   {
     id: '1223423',
@@ -58,5 +60,45 @@ export const USERS = [
     updatedAt: new Date(),
     links: null,
     checkProperties: jest.fn(),
+  },
+];
+
+export const LINKS: Link[] = [
+  {
+    id: '98ead8a7-eea9-4b1a-a285-7021eea5d3c3',
+    urlOriginal: 'https://es.wikipedia.org/wiki/Viacheslav_von_Pleve',
+    shortURL: '2x313',
+    status: true,
+    expirationDate: new Date('July 20 2025, 69 00:20:18'),
+    visits: [],
+    user: null,
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    setExpirationDate: () => {},
+  },
+  {
+    id: '5dd5ea13-f377-473e-89da-0586a4f5f484',
+    urlOriginal:
+      'https://es.wikipedia.org/wiki/Copa_Libertadores_Femenina_2024',
+    shortURL: '2x311',
+    status: true,
+    expirationDate: new Date('July 20 2025, 69 00:20:18'),
+    visits: [],
+    user: null,
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    setExpirationDate: () => {},
+  },
+  {
+    id: '0bc8a6b8-1b3b-47b2-b1a4-2f4e5a170201',
+    urlOriginal: 'https://es.wikipedia.org/wiki/Torneo_de_Pek%C3%ADn_2024',
+    shortURL: '2x312',
+    status: true,
+    expirationDate: new Date('July 20 2025, 69 00:20:18'),
+    visits: [],
+    user: null,
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    setExpirationDate: () => {},
   },
 ];
