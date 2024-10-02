@@ -13,3 +13,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes: 
       - ./database:/var/lib/postgresql/data/pgdata
+
+volumes:
+  postgres_data:
+    - ./database:/var/lib/postgresql/data/pgdata
