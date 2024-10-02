@@ -20,6 +20,7 @@ jobs:
           DATABASE_NAME: 'storefy_db_test'
           DATABASE_USER: 'franklinserif'
           DATABASE_USER_PASSWORD: '1234'
+          DATABASE_PASSWORD: '1234'
 
     steps:
       - name: Checkout code
@@ -58,6 +59,7 @@ jobs:
           DATABASE_PORT: 5433
           DATABASE_USER: franklinserif
           DATABASE_USER_PASSWORD: '1234'
+          DATABASE_PASSWORD: '1234'
           DATABASE_NAME: storefy_db_test
 
       - name: Create Pull Request
