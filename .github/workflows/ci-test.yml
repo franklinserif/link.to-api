@@ -19,10 +19,11 @@ jobs:
         env:
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: 5433
+          PGPASSWORD: '1234567'
           POSTGRES_USER: 'franklinserif'
-          POSTGRES_PASSWORD: '1234' 
+          POSTGRES_PASSWORD: '1234567' 
           DATABASE_NAME: 'storefy_db_test'
-          DATABASE_USER_PASSWORD: '1234'
+          DATABASE_USER_PASSWORD: '1234567'
 
     steps:
       - name: Checkout code
@@ -46,9 +47,9 @@ jobs:
 
       - name: Create Database and User
         run: |
-          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE DATABASE storefy_db_test;"
-          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE USER franklinserif WITH PASSWORD '1234';"
-          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE storefy_db_test TO franklinserif;"
+          PGPASSWORD='1234567' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE DATABASE storefy_db_test;"
+          PGPASSWORD='1234567' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE USER franklinserif WITH PASSWORD '1234567';"
+          PGPASSWORD='1234567' psql -h 127.0.0.1 -p 5433 -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE storefy_db_test TO franklinserif;"
 
       - name: Install dependencies
         run: npm install
@@ -61,9 +62,10 @@ jobs:
           DATABASE_PORT: 5433
           POSTGRES_HOST_AUTH_METHOD: 'trust'
           POSTGRES_USER: 'franklinserif'
-          POSTGRES_PASSWORD: '1234'
+          POSTGRES_PASSWORD: '1234567'
           DATABASE_NAME: 'storefy_db_test'
-          DATABASE_USER_PASSWORD: '1234'
+          DATABASE_USER_PASSWORD: '1234567'
+          PGPASSWORD: '1234567'
 
       - name: Create Pull Request
         if: success()
