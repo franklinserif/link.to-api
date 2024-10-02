@@ -17,10 +17,12 @@ jobs:
           - 5433:5432
         options: --health-cmd="pg_isready -U postgres" --health-interval=10s --health-timeout=5s --health-retries=10 --memory=2g --cpus=2
         env:
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PORT: 5433
+          POSTGRES_USER: 'franklinserif'
+          POSTGRES_PASSWORD: '1234' 
           DATABASE_NAME: 'storefy_db_test'
-          DATABASE_USER: 'franklinserif'
           DATABASE_USER_PASSWORD: '1234'
-          DATABASE_PASSWORD: '1234'
 
     steps:
       - name: Checkout code
@@ -57,10 +59,11 @@ jobs:
           CI: true
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: 5433
-          DATABASE_USER: franklinserif
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+          POSTGRES_USER: 'franklinserif'
+          POSTGRES_PASSWORD: '1234'
+          DATABASE_NAME: 'storefy_db_test'
           DATABASE_USER_PASSWORD: '1234'
-          DATABASE_PASSWORD: '1234'
-          DATABASE_NAME: storefy_db_test
 
       - name: Create Pull Request
         if: success()
