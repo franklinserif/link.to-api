@@ -21,13 +21,13 @@ function getHashCode(id: string) {
     hash |= 0;
   }
 
-  return hash;
+  return Math.abs(hash);
 }
 
 export function shortenURL() {
   const id = uuid();
 
-  const hashCode = Math.abs(getHashCode(id));
+  const hashCode = getHashCode(id);
 
   const shortURL = encodeBase62(hashCode);
 
