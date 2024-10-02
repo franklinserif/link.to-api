@@ -1,0 +1,79 @@
+# prettier-ignore
+name: CI Test
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5433:5432
+        options: >
+          --health-cmd="pg_isready -U postgres" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=10 
+          --memory=2g 
+          --cpus=2
+        env:
+          POSTGRES_DB: 'storefy_db_test'
+          POSTGRES_USER: 'franklinserif'
+          POSTGRES_PASSWORD: '1234'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..60}; do
+            if pg_isready -h 127.0.0.1 -p 5433 -U postgres; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo 'Waiting for PostgreSQL...'
+            sleep 5
+          done
+
+      - name: Create Database and User
+        run: |
+          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE DATABASE storefy_db_test;"
+          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "CREATE USER franklinserif WITH PASSWORD '1234';"
+          PGPASSWORD='1234' psql -h 127.0.0.1 -p 5433 -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE storefy_db_test TO franklinserif;"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+        env:
+          CI: true
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5433
+          POSTGRES_USER: franklinserif
+          POSTGRES_PASSWORD: '1234'
+          POSTGRES_DB: storefy_db_test
+
+      - name: Create Pull Request
+        if: success()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT }}
+          branch: main
+          title: 'Merge dev into main'
+          body: 'Automated PR to merge changes from dev into main.'
+          labels: 'auto-generated'
+          assignees: 'franklinsrr'
+          reviewers: 'franklinsrr'
