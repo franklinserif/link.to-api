@@ -15,13 +15,7 @@ jobs:
         image: postgres:13.16
         ports:
           - 5433:5432
-        options: >
-          --health-cmd="pg_isready -U postgres" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=10 
-          --memory=2g 
-          --cpus=2
+        options: --health-cmd="pg_isready -U postgres" --health-interval=10s --health-timeout=5s --health-retries=10 --memory=2g --cpus=2
         env:
           DATABASE_NAME: 'storefy_db_test'
           DATABASE_USER: 'franklinserif'
