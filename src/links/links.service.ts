@@ -63,6 +63,9 @@ export class LinksService {
       return link;
     } catch (error) {
       this.logger.error(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error);
+      }
       throw new InternalServerErrorException('cannot find original url');
     }
   }
