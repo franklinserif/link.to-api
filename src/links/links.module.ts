@@ -10,5 +10,6 @@ import { AuthModule } from '@auth/auth.module';
   controllers: [LinksController],
   providers: [LinksService],
   imports: [TypeOrmModule.forFeature([Link]), VisitsModule, AuthModule],
+  exports: [LinksService],
 })
 export class LinksModule {}
