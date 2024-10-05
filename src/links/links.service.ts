@@ -20,9 +20,11 @@ export class LinksService {
     private readonly visitsService: VisitsService,
   ) {}
 
-  async findAll(): Promise<Link[]> {
+  async findAll(userId: string): Promise<Link[]> {
     try {
-      const links = await this.linksRepository.find();
+      const links = await this.linksRepository.find({
+        where: { user: { id: userId } },
+      });
       const updatedLinks: Link[] = [];
 
       for (const link of links) {

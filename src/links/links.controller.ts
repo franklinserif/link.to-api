@@ -27,8 +27,8 @@ export class LinksController {
   @AuthGuardedOperation('Get all links (Authenticated users only)', [
     ApiResponse({ status: 200, description: 'List of all links.' }),
   ])
-  async findAll() {
-    return this.linksService.findAll();
+  async findAll(@GetUser() user: User) {
+    return this.linksService.findAll(user.id);
   }
 
   @Get(':id')
@@ -54,14 +54,36 @@ export class LinksController {
     return res.redirect(link.urlOriginal);
   }
 
+  @Get('information/:id')
+  @PublicOperation('Get the original URL by its shortened ID', [
+    ApiParam({ name: 'id', description: 'The ID of the shortened link' }),
+    ApiResponse({
+      status: 302,
+      description: 'Redirected to the original URL.',
+    }),
+    ApiResponse({ status: 404, description: 'Link not found.' }),
+  ])
+  async information(@Param('id') id: string) {
+    return this.linksService.findOne(id);
+  }
+
   @Post()
   @PublicOperation('Create a new shortened link', [
     ApiResponse({ status: 201, description: 'Link successfully created.' }),
     ApiResponse({ status: 400, description: 'Invalid input.' }),
   ])
-  async create(
+  async create(@Body() createLinkDto: CreateLinkDto) {
+    return this.linksService.create(createLinkDto, undefined);
+  }
+
+  @Post('shield')
+  @AuthGuardedOperation('Create a new shortened link with an user related', [
+    ApiResponse({ status: 201, description: 'Link successfully created.' }),
+    ApiResponse({ status: 400, description: 'Invalid input.' }),
+  ])
+  async protectedCreate(
     @Body() createLinkDto: CreateLinkDto,
-    @GetUser() user: User | undefined,
+    @GetUser() user: User,
   ) {
     return this.linksService.create(createLinkDto, user);
   }
