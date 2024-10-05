@@ -6,16 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LinksService } from '@links/links.service';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { User } from '@users/entities/user.entity';
-import { VisitorInformation } from '@shared/interfaces/visitor';
-import { GetVisitor } from '@visits/decorators/get-visitor.decorator';
 import { AuthGuardedOperation, PublicOperation } from '@shared/decorators';
 
 @ApiTags('Links')
@@ -40,30 +36,7 @@ export class LinksController {
     }),
     ApiResponse({ status: 404, description: 'Link not found.' }),
   ])
-  async findOne(
-    @Param('id') id: string,
-    @GetVisitor() visitor: VisitorInformation,
-    @Res() res: Response,
-  ) {
-    const link = await this.linksService.findOriginalUrl(id, visitor);
-
-    if (!link.status) {
-      return res.status(404).redirect('/');
-    }
-
-    return res.redirect(link.urlOriginal);
-  }
-
-  @Get('information/:id')
-  @PublicOperation('Get the original URL by its shortened ID', [
-    ApiParam({ name: 'id', description: 'The ID of the shortened link' }),
-    ApiResponse({
-      status: 302,
-      description: 'Redirected to the original URL.',
-    }),
-    ApiResponse({ status: 404, description: 'Link not found.' }),
-  ])
-  async information(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.linksService.findOne(id);
   }
 
