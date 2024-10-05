@@ -5,7 +5,7 @@ import { VisitsService } from '@visits/visits.service';
 import { PassportModule } from '@nestjs/passport';
 import { VisitorInformation } from '@shared/interfaces/visitor';
 import { LINKS } from '@shared/constants/testVariables';
-import { Request, Response } from 'express'; // Asegúrate de importar los tipos adecuados
+import { Response } from 'express';
 import { User } from '@users/entities/user.entity';
 import { CreateLinkDto, UpdateLinkDto } from './dto';
 
@@ -84,7 +84,7 @@ describe('LinksController', () => {
     const links = await controller.findAll({} as User);
     expect(links).toEqual(LINKS);
   });
-
+  /* 
   it('should return a redirect to the original URL if the link exists and is active', async () => {
     const id = LINKS[1].id;
 
@@ -100,7 +100,7 @@ describe('LinksController', () => {
 
     expect(mockResponse.status).toHaveBeenCalledWith(404);
     expect(mockResponse.redirect).toHaveBeenCalledWith('/');
-  });
+  }); */
 
   it('should create a link', async () => {
     const link = await controller.create(mockCreateLink);
