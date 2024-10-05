@@ -68,7 +68,7 @@ export const LINKS: Link[] = [
     id: '98ead8a7-eea9-4b1a-a285-7021eea5d3c3',
     urlOriginal: 'https://es.wikipedia.org/wiki/Viacheslav_von_Pleve',
     shortURL: '2x313',
-    status: true,
+    status: false,
     expirationDate: new Date('July 20 2025, 69 00:20:18'),
     visits: [],
     user: null,
