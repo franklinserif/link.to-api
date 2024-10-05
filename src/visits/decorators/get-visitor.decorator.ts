@@ -12,7 +12,6 @@ export const GetVisitor = createParamDecorator(
       const visitor = await getVisitorInformation(req);
       return visitor;
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException('cannot get visitor information');
     }
   },
