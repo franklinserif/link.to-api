@@ -30,7 +30,6 @@ async function getGeo(req: Request) {
       country: geoLocationInformation.data.country_name,
     };
   } catch (error) {
-    console.log(error);
     return { ip: ip, location: '', country: '' };
   }
 }
