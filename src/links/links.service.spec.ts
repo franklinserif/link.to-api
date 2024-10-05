@@ -24,6 +24,7 @@ describe('LinksService', () => {
       country: 'EEUU',
     },
   };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
@@ -56,88 +57,96 @@ describe('LinksService', () => {
     linkRepository = module.get<Repository<Link>>(LINK_REPOSITORY_TOKEN);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  describe('linkRepository defined', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
+    });
 
-  it('linkRepository should be defined', () => {
-    expect(linkRepository).toBeDefined();
-  });
+    it('linkRepository should be defined', () => {
+      expect(linkRepository).toBeDefined();
+    });
 
-  it('should be called', async () => {
-    await service.findAll();
-    expect(linkRepository.find).toHaveBeenCalled();
-  });
+    it('should be called', async () => {
+      await service.findAll();
+      expect(linkRepository.find).toHaveBeenCalled();
+    });
 
-  it('should be called', async () => {
-    await service.findAll();
-    expect(linkRepository.find).toHaveReturnedWith(LINKS);
-  });
-
-  it('should find a link', async () => {
-    const shortUrl = LINKS[0].shortURL;
-
-    const link = await service.findOriginalUrl(shortUrl, visitor);
-
-    expect(link).toEqual(LINKS[0]);
-    expect(linkRepository.findOne).toHaveBeenCalledWith({
-      where: { shortURL: shortUrl },
+    it('should be called', async () => {
+      await service.findAll();
+      expect(linkRepository.find).toHaveReturnedWith(LINKS);
     });
   });
 
-  it('should throw a not found exepction when the url not found', async () => {
-    const shortUrl = '2lxwad';
+  describe('find', () => {
+    it('should find a link', async () => {
+      const shortUrl = LINKS[0].shortURL;
 
-    await expect(service.findOriginalUrl(shortUrl, visitor)).rejects.toThrow(
-      NotFoundException,
-    );
-  });
+      const link = await service.findOriginalUrl(shortUrl, visitor);
 
-  it('should update a link', async () => {
-    const linkId = LINKS[0].id;
-    const updateLinkDto = { urlOriginal: 'https://newurl.com' };
-
-    const updatedLink = await service.update(linkId, updateLinkDto);
-
-    expect(linkRepository.findOneBy).toHaveBeenCalledWith({ id: linkId });
-  });
-
-  it('should throw a NotFoundException if link does not exist', async () => {
-    const linkId = 'non-existing-id';
-    const updateLinkDto = { urlOriginal: 'https://newurl.com' };
-
-    jest.spyOn(linkRepository, 'findOneBy').mockResolvedValueOnce(undefined);
-
-    await expect(service.update(linkId, updateLinkDto)).rejects.toThrow(
-      NotFoundException,
-    );
-
-    expect(linkRepository.findOneBy).toHaveBeenCalledWith({ id: linkId });
-  });
-
-  it('should delete a link', async () => {
-    const linkId = LINKS[0].id;
-
-    jest.spyOn(linkRepository, 'findOne').mockResolvedValueOnce(LINKS[0]);
-
-    const result = await service.remove(linkId);
-
-    expect(linkRepository.findOne).toHaveBeenCalledWith({
-      where: { id: linkId },
+      expect(link).toEqual(LINKS[0]);
+      expect(linkRepository.findOne).toHaveBeenCalledWith({
+        where: { shortURL: shortUrl },
+      });
     });
 
-    expect(linkRepository.delete).toHaveBeenCalledWith(linkId);
+    it('should throw a not found exepction when the url not found', async () => {
+      const shortUrl = '2lxwad';
+
+      await expect(service.findOriginalUrl(shortUrl, visitor)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
-  it('should throw a NotFoundException if link does not exist', async () => {
-    const linkId = 'non-existing-id';
+  describe('update', () => {
+    it('should update a link', async () => {
+      const linkId = LINKS[0].id;
+      const updateLinkDto = { urlOriginal: 'https://newurl.com' };
 
-    jest.spyOn(linkRepository, 'findOne').mockResolvedValueOnce(undefined);
+      await service.update(linkId, updateLinkDto);
 
-    await expect(service.remove(linkId)).rejects.toThrow(NotFoundException);
+      expect(linkRepository.findOneBy).toHaveBeenCalledWith({ id: linkId });
+    });
 
-    expect(linkRepository.findOne).toHaveBeenCalledWith({
-      where: { id: linkId },
+    it('should throw a NotFoundException if link does not exist', async () => {
+      const linkId = 'non-existing-id';
+      const updateLinkDto = { urlOriginal: 'https://newurl.com' };
+
+      jest.spyOn(linkRepository, 'findOneBy').mockResolvedValueOnce(undefined);
+
+      await expect(service.update(linkId, updateLinkDto)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(linkRepository.findOneBy).toHaveBeenCalledWith({ id: linkId });
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a link', async () => {
+      const linkId = LINKS[0].id;
+
+      jest.spyOn(linkRepository, 'findOne').mockResolvedValueOnce(LINKS[0]);
+
+      await service.remove(linkId);
+
+      expect(linkRepository.findOne).toHaveBeenCalledWith({
+        where: { id: linkId },
+      });
+
+      expect(linkRepository.delete).toHaveBeenCalledWith(linkId);
+    });
+
+    it('should throw a NotFoundException if link does not exist', async () => {
+      const linkId = 'non-existing-id';
+
+      jest.spyOn(linkRepository, 'findOne').mockResolvedValueOnce(undefined);
+
+      await expect(service.remove(linkId)).rejects.toThrow(NotFoundException);
+
+      expect(linkRepository.findOne).toHaveBeenCalledWith({
+        where: { id: linkId },
+      });
     });
   });
 });
