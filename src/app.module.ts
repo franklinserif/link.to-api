@@ -7,6 +7,7 @@ import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from '@links/links.module';
 import { VisitsModule } from '@visits/visits.module';
 import { AuthModule } from '@auth/auth.module';
+import { AppController } from './app.controller';
 import { dataSourceOptions } from '@db/data-source';
 
 @Module({
@@ -26,7 +27,7 @@ import { dataSourceOptions } from '@db/data-source';
     VisitsModule,
     AuthModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule implements NestModule {
