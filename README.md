@@ -1,7 +1,8 @@
 <!-- prettier-ignore -->
 # Linkto API
 
-Esta es una API RESTful construida con [NestJS](https://nestjs.com/) que se encarga de acortar enlaces. La aplicación incluye un sistema de autenticación y está dockerizada para facilitar su despliegue y desarrollo.}
+Esta es una API RESTful construida con [NestJS](https://nestjs.com/) que se encarga de acortar enlaces. La aplicación incluye un sistema de autenticación y está dockerizada para facilitar su despliegue y desarrollo.
+
 ![ci-test](https://github.com/franklinsrr/link.to-api/actions/workflows/ci-test.yml/badge.svg)
 
 ## Características
