@@ -69,13 +69,32 @@ describe('LinksService', () => {
 
   describe('findAll', () => {
     it('should be call findAll', async () => {
-      await service.findAll();
+      await service.findAll('cf21b916-c710-4c84-8db4-bf9069bd3b4b');
       expect(linkRepository.find).toHaveBeenCalled();
     });
 
     it('should be call findAll', async () => {
-      await service.findAll();
+      await service.findAll('cf21b916-c710-4c84-8db4-bf9069bd3b4b');
       expect(linkRepository.find).toHaveReturnedWith(LINKS);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should find a link', async () => {
+      await service.findOne('98ead8a7-eea9-4b1a-a285-7021eea5d3c3');
+      expect(linkRepository.findOneBy).toHaveReturnedWith(LINKS[0]);
+    });
+
+    it('should throw an exeption if the id is not found', async () => {
+      await expect(
+        service.findOne('98ead8a7-eea9-4b1a-a285-7021eea5d3x3'),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw an exeption if id is not valid', async () => {
+      await expect(service.findOne('2342342q')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

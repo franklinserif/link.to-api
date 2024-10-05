@@ -81,7 +81,7 @@ describe('LinksController', () => {
   });
 
   it('should return an array of links', async () => {
-    const links = await controller.findAll();
+    const links = await controller.findAll({} as User);
     expect(links).toEqual(LINKS);
   });
 
@@ -103,7 +103,7 @@ describe('LinksController', () => {
   });
 
   it('should create a link', async () => {
-    const link = await controller.create(mockCreateLink, {} as unknown as User);
+    const link = await controller.create(mockCreateLink);
 
     expect(link).toEqual(mockCreateLink);
   });
