@@ -1,7 +1,6 @@
 import {
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DeleteResult, Repository } from 'typeorm';
@@ -15,8 +14,6 @@ import { VisitorInformation } from '@shared/interfaces/visitor';
 
 @Injectable()
 export class LinksService {
-  private readonly logger: Logger = new Logger(LinksService.name);
-
   constructor(
     @InjectRepository(Link)
     private readonly linksRepository: Repository<Link>,
@@ -35,7 +32,6 @@ export class LinksService {
 
       return updatedLinks;
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('cannot find links');
     }
   }
@@ -62,7 +58,6 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.logger.error(error);
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error);
       }
@@ -90,7 +85,6 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('Failed to create link');
     }
   }
@@ -110,8 +104,6 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.logger.error(error);
-
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error);
       }
@@ -128,8 +120,6 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      this.logger.error(error);
-
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error);
       }
@@ -157,7 +147,6 @@ export class LinksService {
 
       return shortURL;
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('Failed to generate short link');
     }
   }
@@ -173,7 +162,6 @@ export class LinksService {
       await this.linksRepository.save(link);
       return link;
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('Failed to check expire date');
     }
   }

@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
@@ -13,7 +12,6 @@ import { encryptPassword } from '@libs/encrypt';
 
 @Injectable()
 export class UsersService {
-  private readonly logger: Logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -25,7 +23,6 @@ export class UsersService {
 
       return users;
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('cannot find users');
     }
   }
@@ -75,8 +72,6 @@ export class UsersService {
   }
 
   private handleErrors(error: any, id: string) {
-    this.logger.error(error);
-
     if (error instanceof NotFoundException) {
       throw new NotFoundException(`User with id ${id} doesn't exist`);
     } else if (error instanceof QueryFailedError) {

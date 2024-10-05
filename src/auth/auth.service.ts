@@ -17,7 +17,6 @@ import { comparePassword, encryptPassword } from '@libs/encrypt';
 
 @Injectable()
 export class AuthService {
-  private readonly logger: Logger = new Logger(AuthService.name);
   constructor(
     @InjectRepository(User)
     private readonly usersRepsitory: Repository<User>,
@@ -47,8 +46,6 @@ export class AuthService {
 
       return await this.createTokens(user);
     } catch (error) {
-      this.logger.error(error);
-
       if (error instanceof EntityNotFoundError) {
         throw new NotFoundException(`User doesn't exist`);
       } else if (error instanceof QueryFailedError) {
@@ -79,7 +76,6 @@ export class AuthService {
         ...tokens,
       };
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException('Failed to create account');
     }
   }
@@ -98,7 +94,6 @@ export class AuthService {
 
       return { accessToken, refreshToken };
     } catch (error) {
-      this.logger.error(error);
       throw new InternalServerErrorException(
         'Failed to create access token and refresh token',
       );
@@ -121,8 +116,6 @@ export class AuthService {
 
       return tokens;
     } catch (error) {
-      this.logger.error(error);
-
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error);
       }
