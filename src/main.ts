@@ -17,7 +17,7 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api', {
-    exclude: [{ path: 'links/:id', method: RequestMethod.GET }],
+    exclude: [{ path: '/:id', method: RequestMethod.GET }],
   });
 
   const config = new DocumentBuilder()
