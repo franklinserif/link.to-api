@@ -47,55 +47,81 @@ describe('UsersService', () => {
       .mockResolvedValue('hashPassword123*qdw');
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  it('usersRepository should be defined', () => {
-    expect(usersRepository).toBeDefined();
-  });
-
-  it('should be called', async () => {
-    await service.findAll();
-    expect(usersRepository.find).toHaveBeenCalled();
-  });
-
-  it('should be called', async () => {
-    await service.findAll();
-    expect(usersRepository.find).toHaveReturnedWith(USERS);
-  });
-
-  it('should find a user', async () => {
-    const userId = USERS[0].id;
-    const user = await service.findOne(userId);
-    expect(user).toEqual(USERS[0]);
-    expect(usersRepository.findOneBy).toHaveBeenCalledWith({ id: userId });
-  });
-
-  it('should throw  when the id is not a valid UUID', async () => {
-    await expect(service.findOne('invalid-id')).rejects.toThrow(
-      NotFoundException,
-    );
-  });
-
-  it('should update a user', async () => {
-    const userId = USERS[0].id;
-    const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
-    const updatedUser = await service.update(userId, updateUserDto);
-
-    expect(updatedUser.firstName).toBe('Updated Name');
-    expect(usersRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining(updateUserDto),
-    );
-  });
-
-  it('should handle errors when deleting a user', async () => {
-    (usersRepository.delete as jest.Mock).mockImplementationOnce(() => {
-      throw new Error('Delete failed');
+  describe('repository defined', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
     });
 
-    await expect(service.remove(USERS[0].id)).rejects.toThrow(
-      InternalServerErrorException,
-    );
+    it('usersRepository should be defined', () => {
+      expect(usersRepository).toBeDefined();
+    });
+  });
+
+  describe('findAll', () => {
+    it('should be called', async () => {
+      await service.findAll();
+      expect(usersRepository.find).toHaveBeenCalled();
+    });
+
+    it('should be called', async () => {
+      await service.findAll();
+      expect(usersRepository.find).toHaveReturnedWith(USERS);
+    });
+  });
+
+  describe('find', () => {
+    it('should find a user', async () => {
+      const userId = USERS[0].id;
+      const user = await service.findOne(userId);
+      expect(user).toEqual(USERS[0]);
+      expect(usersRepository.findOneBy).toHaveBeenCalledWith({ id: userId });
+    });
+
+    it('should throw  when the id is not a valid UUID', async () => {
+      await expect(service.findOne('invalid-id')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('update', () => {
+    it('should update a user', async () => {
+      const userId = USERS[0].id;
+      const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
+      const updatedUser = await service.update(userId, updateUserDto);
+
+      expect(updatedUser.firstName).toBe('Updated Name');
+      expect(usersRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining(updateUserDto),
+      );
+    });
+
+    it("should throw an exeption when id user it's not founded", async () => {
+      const userId = '0c15b20f-3650-40ea-b808-abdcb49f4f37';
+      const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
+      await expect(service.update(userId, updateUserDto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it("should throw an exeption when id user it's not valid", async () => {
+      const userId = 'invalid id';
+      const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
+      await expect(service.update(userId, updateUserDto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('delete ', () => {
+    it('should handle errors when deleting a user', async () => {
+      (usersRepository.delete as jest.Mock).mockImplementationOnce(() => {
+        throw new Error('Delete failed');
+      });
+
+      await expect(service.remove(USERS[0].id)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
   });
 });

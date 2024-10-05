@@ -65,13 +65,15 @@ describe('LinksService', () => {
     it('linkRepository should be defined', () => {
       expect(linkRepository).toBeDefined();
     });
+  });
 
-    it('should be called', async () => {
+  describe('findAll', () => {
+    it('should be call findAll', async () => {
       await service.findAll();
       expect(linkRepository.find).toHaveBeenCalled();
     });
 
-    it('should be called', async () => {
+    it('should be call findAll', async () => {
       await service.findAll();
       expect(linkRepository.find).toHaveReturnedWith(LINKS);
     });
