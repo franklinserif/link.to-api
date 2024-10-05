@@ -38,6 +38,23 @@ export class LinksService {
     }
   }
 
+  async findOne(id: string): Promise<Link> {
+    try {
+      const link = await this.linksRepository.findOneBy({ id });
+
+      if (!link?.id) {
+        throw new NotFoundException(`link with id ${id} not found`);
+      }
+
+      return link;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error);
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
   async findOriginalUrl(
     shortURL: string,
     visitor: VisitorInformation,
