@@ -3,7 +3,6 @@ import { PassportModule } from '@nestjs/passport';
 import { VisitsService } from '@visits/visits.service';
 import { LinksService } from '@links/links.service';
 import { LinksController } from '@links/links.controller';
-import { VisitorInformation } from '@shared/interfaces/visitor';
 import { LINKS } from '@shared/constants/testVariables';
 import { User } from '@users/entities/user.entity';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
@@ -31,12 +30,8 @@ describe('LinksController', () => {
           provide: LinksService,
           useValue: {
             findAll: jest.fn(() => LINKS),
-            findOriginalUrl: jest.fn(
-              (id: string, visitor: VisitorInformation) =>
-                LINKS.find((link) => link.id === id),
-            ),
             create: jest.fn(
-              (criteria: { createLinkDto: CreateLinkDto; user: User }) => ({
+              (_: { createLinkDto: CreateLinkDto; user: User }) => ({
                 ...mockCreateLink,
               }),
             ),

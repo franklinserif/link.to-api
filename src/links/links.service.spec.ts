@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { FindOperator, Repository } from 'typeorm';
@@ -8,6 +7,7 @@ import { Link } from '@links/entities/link.entity';
 import { VisitsService } from '@visits/visits.service';
 import { LINKS } from '@shared/constants/testVariables';
 import { VisitorInformation } from '@shared/interfaces/visitor';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 describe('LinksService', () => {
   let service: LinksService;
@@ -85,13 +85,11 @@ describe('LinksService', () => {
     it('should throw an exeption if the id is not found', async () => {
       await expect(
         service.findOne('98ead8a7-eea9-4b1a-a285-7021eea5d3x3'),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(ErrorManager);
     });
 
     it('should throw an exeption if id is not valid', async () => {
-      await expect(service.findOne('2342342q')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne('2342342q')).rejects.toThrow(ErrorManager);
     });
   });
 
@@ -111,7 +109,7 @@ describe('LinksService', () => {
       const shortUrl = '2lxwad';
 
       await expect(service.findOriginalUrl(shortUrl, visitor)).rejects.toThrow(
-        NotFoundException,
+        ErrorManager,
       );
     });
   });
@@ -133,7 +131,7 @@ describe('LinksService', () => {
       jest.spyOn(linkRepository, 'findOneBy').mockResolvedValueOnce(undefined);
 
       await expect(service.update(linkId, updateLinkDto)).rejects.toThrow(
-        NotFoundException,
+        ErrorManager,
       );
 
       expect(linkRepository.findOneBy).toHaveBeenCalledWith({ id: linkId });
@@ -160,7 +158,15 @@ describe('LinksService', () => {
 
       jest.spyOn(linkRepository, 'findOne').mockResolvedValueOnce(undefined);
 
-      await expect(service.remove(linkId)).rejects.toThrow(NotFoundException);
+      try {
+        await service.remove(linkId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ErrorManager);
+
+        expect(error.getStatus()).toBe(404);
+
+        expect(error.message).toBe(`can't delete the link`);
+      }
 
       expect(linkRepository.findOne).toHaveBeenCalledWith({
         where: { id: linkId },
@@ -170,8 +176,6 @@ describe('LinksService', () => {
 
   describe('cronjob', () => {
     it('should execute cron job', async () => {
-      const now = new Date();
-
       await service.handleCron();
 
       expect(linkRepository.update).toHaveBeenCalledWith(

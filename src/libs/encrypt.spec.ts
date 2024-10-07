@@ -12,7 +12,7 @@ describe('encryptPassword', () => {
 describe('comparePassword', () => {
   it('should return true', async () => {
     const securePassword = await encryptPassword(password);
-    const result = await comparePassword(password, securePassword);
+    await comparePassword(password, securePassword);
 
     expect(securePassword).toBeTruthy();
   });

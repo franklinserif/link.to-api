@@ -10,6 +10,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -78,9 +79,7 @@ describe('UsersService', () => {
     });
 
     it('should throw  when the id is not a valid UUID', async () => {
-      await expect(service.findOne('invalid-id')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne('invalid-id')).rejects.toThrow(ErrorManager);
     });
   });
 
@@ -100,7 +99,7 @@ describe('UsersService', () => {
       const userId = '0c15b20f-3650-40ea-b808-abdcb49f4f37';
       const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
       await expect(service.update(userId, updateUserDto)).rejects.toThrow(
-        NotFoundException,
+        ErrorManager,
       );
     });
 
@@ -108,7 +107,7 @@ describe('UsersService', () => {
       const userId = 'invalid id';
       const updateUserDto = { ...USERS[0], firstName: 'Updated Name' };
       await expect(service.update(userId, updateUserDto)).rejects.toThrow(
-        NotFoundException,
+        ErrorManager,
       );
     });
   });
@@ -119,9 +118,7 @@ describe('UsersService', () => {
         throw new Error('Delete failed');
       });
 
-      await expect(service.remove(USERS[0].id)).rejects.toThrow(
-        InternalServerErrorException,
-      );
+      await expect(service.remove(USERS[0].id)).rejects.toThrow(ErrorManager);
     });
   });
 });
