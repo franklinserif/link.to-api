@@ -1,15 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import {
-  DeleteResult,
-  LessThanOrEqual,
-  QueryFailedError,
-  Repository,
-} from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DeleteResult, LessThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -18,6 +8,7 @@ import { VisitsService } from '@visits/visits.service';
 import { User } from '@users/entities/user.entity';
 import { shortenURL } from '@libs/link';
 import { VisitorInformation } from '@shared/interfaces/visitor';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 @Injectable()
 export class LinksService {
@@ -35,7 +26,7 @@ export class LinksService {
 
       return links;
     } catch (error) {
-      throw new InternalServerErrorException('cannot find links');
+      throw new ErrorManager(error, 'failed to find links');
     }
   }
 
@@ -49,7 +40,7 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.handleErrors(error, id);
+      throw new ErrorManager(error);
     }
   }
 
@@ -69,11 +60,7 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      this.handleErrors(
-        error,
-        shortURL,
-        `can't find link with short url ${shortURL}`,
-      );
+      throw new ErrorManager(error);
     }
   }
 
@@ -97,7 +84,7 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create link');
+      throw new ErrorManager(error, `can't create a new link`);
     }
   }
 
@@ -116,7 +103,7 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      this.handleErrors(error, id, `can't update link with id: ${id}`);
+      throw new ErrorManager(error, `can't update the link`);
     }
   }
 
@@ -128,7 +115,7 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      this.handleErrors(error, id, `can't delete link with ${id}`);
+      throw new ErrorManager(error, `can't delete the link`);
     }
   }
 
@@ -147,7 +134,10 @@ export class LinksService {
         expirationDate: LessThanOrEqual(now),
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new ErrorManager(
+        error,
+        `can't execute the cron job for update and remove links`,
+      );
     }
   }
 
@@ -170,17 +160,7 @@ export class LinksService {
 
       return shortURL;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to generate short link');
+      throw new ErrorManager(error, 'failed to generate shortURL');
     }
-  }
-
-  private handleErrors(error: any, id: string, message?: string) {
-    if (error instanceof NotFoundException) {
-      throw new NotFoundException(`Links with id ${id} doesn't exist`);
-    } else if (error instanceof QueryFailedError) {
-      throw new BadRequestException(message);
-    }
-
-    throw new InternalServerErrorException();
   }
 }
