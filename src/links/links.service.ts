@@ -1,9 +1,15 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, LessThanOrEqual, Repository } from 'typeorm';
+import {
+  DeleteResult,
+  LessThanOrEqual,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -49,10 +55,7 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-      throw new InternalServerErrorException();
+      this.handleErrors(error, id);
     }
   }
 
@@ -78,10 +81,11 @@ export class LinksService {
 
       return link;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-      throw new InternalServerErrorException('cannot find original url');
+      this.handleErrors(
+        error,
+        shortURL,
+        `can't find link with short url ${shortURL}`,
+      );
     }
   }
 
@@ -124,11 +128,7 @@ export class LinksService {
 
       return await this.linksRepository.save(link);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-
-      throw new InternalServerErrorException('Failed to update link');
+      this.handleErrors(error, id, `can't update link with id: ${id}`);
     }
   }
 
@@ -140,11 +140,7 @@ export class LinksService {
 
       return await this.linksRepository.delete(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-
-      throw new InternalServerErrorException('Failed to delete link');
+      this.handleErrors(error, id, `can't delete link with ${id}`);
     }
   }
 
@@ -203,5 +199,15 @@ export class LinksService {
     } catch (error) {
       throw new InternalServerErrorException('Failed to check expire date');
     }
+  }
+
+  private handleErrors(error: any, id: string, message?: string) {
+    if (error instanceof NotFoundException) {
+      throw new NotFoundException(`Links with id ${id} doesn't exist`);
+    } else if (error instanceof QueryFailedError) {
+      throw new BadRequestException(message);
+    }
+
+    throw new InternalServerErrorException();
   }
 }

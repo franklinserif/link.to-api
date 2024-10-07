@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PassportModule } from '@nestjs/passport';
-import { Response } from 'express';
 import { VisitsService } from '@visits/visits.service';
 import { LinksService } from '@links/links.service';
 import { LinksController } from '@links/links.controller';
@@ -12,23 +11,6 @@ import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 describe('LinksController', () => {
   let controller: LinksController;
   let service: LinksService;
-
-  const visitor: VisitorInformation = {
-    userAgent: {
-      browser: 'chrome',
-      os: 'Linux' as unknown as UAParser.IOS,
-    },
-    geo: {
-      ip: '192.168.123.132',
-      location: 'san francisco',
-      country: 'EEUU',
-    },
-  };
-
-  const mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    redirect: jest.fn(),
-  } as unknown as Response;
 
   const mockCreateLink = {
     ...LINKS[0],
@@ -84,23 +66,6 @@ describe('LinksController', () => {
     const links = await controller.findAll({} as User);
     expect(links).toEqual(LINKS);
   });
-  /* 
-  it('should return a redirect to the original URL if the link exists and is active', async () => {
-    const id = LINKS[1].id;
-
-    await controller.findOne(id, visitor, mockResponse);
-
-    expect(mockResponse.redirect).toHaveBeenCalledWith(LINKS[1].urlOriginal);
-  });
-
-  it('should return a 404 redirect if the link is inactive', async () => {
-    const id = LINKS[0].id;
-
-    await controller.findOne(id, visitor, mockResponse);
-
-    expect(mockResponse.status).toHaveBeenCalledWith(404);
-    expect(mockResponse.redirect).toHaveBeenCalledWith('/');
-  }); */
 
   it('should create a link', async () => {
     const link = await controller.create(mockCreateLink);
