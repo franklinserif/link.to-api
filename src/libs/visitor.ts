@@ -50,8 +50,11 @@ function getUserAgentInformation(req: Request) {
 export async function getVisitorInformation(
   req: Request,
 ): Promise<VisitorInformation> {
+  const geo = await getGeo(req);
+  const userAgent = await getUserAgentInformation(req);
+
   return {
-    geo: await getGeo(req),
-    userAgent: getUserAgentInformation(req),
+    ...geo,
+    ...userAgent,
   };
 }
