@@ -14,15 +14,11 @@ describe('LinksService', () => {
   let linkRepository: Repository<Link>;
   let LINK_REPOSITORY_TOKEN = getRepositoryToken(Link);
   const visitor: VisitorInformation = {
-    userAgent: {
-      browser: 'chrome',
-      os: 'Linux' as unknown as UAParser.IOS,
-    },
-    geo: {
-      ip: '192.168.123.132',
-      location: 'san francisco',
-      country: 'EEUU',
-    },
+    browser: 'chrome',
+    os: 'Linux',
+    ip: '192.168.123.132',
+    location: 'san francisco',
+    country: 'EEUU',
   };
 
   beforeEach(async () => {
