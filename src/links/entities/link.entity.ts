@@ -47,7 +47,7 @@ export class Link {
     const currentDate = new Date();
     if (this.user) {
       this.expirationDate = new Date(
-        currentDate.setMonth(currentDate.getMonth() + 3),
+        currentDate.setMonth(currentDate.getMonth() + 6),
       );
     } else {
       this.expirationDate = new Date(
