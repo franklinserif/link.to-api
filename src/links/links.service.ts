@@ -32,14 +32,8 @@ export class LinksService {
       const links = await this.linksRepository.find({
         where: { user: { id: userId } },
       });
-      const updatedLinks: Link[] = [];
 
-      for (const link of links) {
-        const updatedLink = await this.checkExpireDate(link);
-        updatedLinks.push(updatedLink);
-      }
-
-      return updatedLinks;
+      return links;
     } catch (error) {
       throw new InternalServerErrorException('cannot find links');
     }
@@ -177,21 +171,6 @@ export class LinksService {
       return shortURL;
     } catch (error) {
       throw new InternalServerErrorException('Failed to generate short link');
-    }
-  }
-
-  private async checkExpireDate(link: Link): Promise<Link> {
-    const currentDate = new Date();
-
-    if (link.expirationDate > currentDate) {
-      return link;
-    }
-    try {
-      link.status = false;
-      await this.linksRepository.save(link);
-      return link;
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to check expire date');
     }
   }
 
