@@ -4,6 +4,7 @@ import axios from 'axios';
 import { IPAPI_HOST } from '@shared/constants/ipapi';
 import { IpapiResponse } from '@shared/interfaces/ipapi';
 import { VisitorInformation } from '@shared/interfaces/visitor';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 function getIp(req: Request) {
   return (
@@ -30,7 +31,7 @@ async function getGeo(req: Request) {
       country: geoLocationInformation.data.country_name,
     };
   } catch (error) {
-    return { ip: ip, location: '', country: '' };
+    throw new ErrorManager(error);
   }
 }
 
