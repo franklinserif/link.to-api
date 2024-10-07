@@ -1,18 +1,17 @@
 import {
-  BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '@users/dto';
 import { SignInDto } from '@auth/dto';
 import { User } from '@users/entities/user.entity';
 import { Tokens, SignupResponse } from '@auth/interfaces';
 import { comparePassword, encryptPassword } from '@libs/encrypt';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 @Injectable()
 export class AuthService {
@@ -45,15 +44,7 @@ export class AuthService {
 
       return await this.createTokens(user);
     } catch (error) {
-      if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException(`User doesn't exist`);
-      } else if (error instanceof QueryFailedError) {
-        throw new BadRequestException('Most provide a valid id');
-      } else if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException(error);
-      }
-
-      throw new InternalServerErrorException();
+      throw new ErrorManager(error);
     }
   }
 
@@ -75,9 +66,7 @@ export class AuthService {
         ...tokens,
       };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to create account: ${error?.message}`,
-      );
+      throw new ErrorManager(error, 'Failed to create new user');
     }
   }
 
@@ -95,9 +84,7 @@ export class AuthService {
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to create access token and refresh token: ${error?.message}`,
-      );
+      throw new ErrorManager(error, 'Failed to create refresh token');
     }
   }
 
@@ -117,13 +104,7 @@ export class AuthService {
 
       return tokens;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-
-      throw new InternalServerErrorException(
-        `Failed to create new tokens: ${error?.message}`,
-      );
+      throw new ErrorManager(error, 'failed to refresh token');
     }
   }
 }
