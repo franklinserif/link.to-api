@@ -59,7 +59,7 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      this.handleErrors(error, id);
+      this.handleErrors(error, id, `can't update user with ${id}`);
     }
   }
 
@@ -67,15 +67,15 @@ export class UsersService {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
-      this.handleErrors(error, id);
+      this.handleErrors(error, id, `can't delete user with ${id}`);
     }
   }
 
-  private handleErrors(error: any, id: string) {
+  private handleErrors(error: any, id: string, message?: string) {
     if (error instanceof NotFoundException) {
       throw new NotFoundException(`User with id ${id} doesn't exist`);
     } else if (error instanceof QueryFailedError) {
-      throw new BadRequestException('Most provide a valid id');
+      throw new BadRequestException(message);
     }
 
     throw new InternalServerErrorException();
