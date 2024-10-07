@@ -1,10 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
