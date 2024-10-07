@@ -5,7 +5,7 @@ import { Link } from './entities/link.entity';
 import { VisitsService } from '@visits/visits.service';
 import { PassportModule } from '@nestjs/passport';
 import { LINKS } from '@shared/constants/testVariables';
-import { Repository } from 'typeorm';
+import { FindOperator, Repository } from 'typeorm';
 import { VisitorInformation } from '@shared/interfaces/visitor';
 import { NotFoundException } from '@nestjs/common';
 
@@ -43,6 +43,7 @@ describe('LinksService', () => {
               );
             }),
             save: jest.fn(),
+            update: jest.fn(),
             delete: jest.fn(),
           },
         },
@@ -167,6 +168,27 @@ describe('LinksService', () => {
 
       expect(linkRepository.findOne).toHaveBeenCalledWith({
         where: { id: linkId },
+      });
+    });
+  });
+
+  describe('cronjob', () => {
+    it('should execute cron job', async () => {
+      const now = new Date();
+
+      await service.handleCron();
+
+      expect(linkRepository.update).toHaveBeenCalledWith(
+        {
+          expirationDate: expect.any(FindOperator),
+          status: true,
+        },
+        { status: false },
+      );
+
+      expect(linkRepository.delete).toHaveBeenCalledWith({
+        status: false,
+        expirationDate: expect.any(FindOperator),
       });
     });
   });
