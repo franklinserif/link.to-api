@@ -3,9 +3,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, LessThanOrEqual, Repository } from 'typeorm';
 import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Link } from '@links/entities/link.entity';
 import { shortenURL } from '@libs/link';
 import { VisitsService } from '@visits/visits.service';
@@ -144,6 +145,25 @@ export class LinksService {
       }
 
       throw new InternalServerErrorException('Failed to delete link');
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleCron() {
+    try {
+      const now = new Date();
+
+      await this.linksRepository.update(
+        { expirationDate: LessThanOrEqual(now), status: true },
+        { status: false },
+      );
+
+      await this.linksRepository.delete({
+        status: false,
+        expirationDate: LessThanOrEqual(now),
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
   }
 
