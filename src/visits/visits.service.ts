@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateVisitDto } from '@visits/dto';
 import { Visit } from '@visits/entities/visit.entity';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 @Injectable()
 export class VisitsService {
@@ -18,7 +19,7 @@ export class VisitsService {
       await this.visitsRepository.save(visitor);
       return visitor;
     } catch (error) {
-      throw new InternalServerErrorException(`Failed to create visit`);
+      throw new ErrorManager(error, `can't register a visit`);
     }
   }
 }
