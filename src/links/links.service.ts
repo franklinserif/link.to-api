@@ -68,14 +68,8 @@ export class LinksService {
 
       if (!link?.id) throw new NotFoundException('link not found');
 
-      const { userAgent, geo } = visitor;
-
       await this.visitsService.create({
-        os: userAgent.os.name,
-        browser: userAgent.browser,
-        country: geo.country,
-        location: geo.location,
-        ip: geo.ip,
+        ...visitor,
         link,
       });
 
