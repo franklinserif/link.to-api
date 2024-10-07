@@ -1,9 +1,6 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { getVisitorInformation } from '@libs/visitor';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 export const GetVisitor = createParamDecorator(
   async (_: string, context: ExecutionContext) => {
@@ -12,7 +9,7 @@ export const GetVisitor = createParamDecorator(
       const visitor = await getVisitorInformation(req);
       return visitor;
     } catch (error) {
-      throw new InternalServerErrorException('cannot get visitor information');
+      throw new ErrorManager(error, 'cannot get visitor information');
     }
   },
 );
