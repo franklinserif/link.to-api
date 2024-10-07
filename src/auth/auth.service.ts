@@ -75,7 +75,9 @@ export class AuthService {
         ...tokens,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create account');
+      throw new InternalServerErrorException(
+        `Failed to create account: ${error?.message}`,
+      );
     }
   }
 
@@ -94,7 +96,7 @@ export class AuthService {
       return { accessToken, refreshToken };
     } catch (error) {
       throw new InternalServerErrorException(
-        'Failed to create access token and refresh token',
+        `Failed to create access token and refresh token: ${error?.message}`,
       );
     }
   }
@@ -119,7 +121,9 @@ export class AuthService {
         throw new NotFoundException(error);
       }
 
-      throw new InternalServerErrorException('Failed to create new tokens');
+      throw new InternalServerErrorException(
+        `Failed to create new tokens: ${error?.message}`,
+      );
     }
   }
 }
