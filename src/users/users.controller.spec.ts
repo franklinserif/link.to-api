@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from '@users/dto';
 import { PassportModule } from '@nestjs/passport';
+import { UsersController } from '@users/users.controller';
+import { UsersService } from '@users/users.service';
+import { UpdateUserDto } from '@users/dto';
 
 describe('UsersController', () => {
   let controller: UsersController;

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { VisitsService } from '@visits/visits.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Visit } from '@visits/entities/visit.entity';
-import { Repository } from 'typeorm';
 import { CreateVisitDto } from '@visits/dto';
-import { BadRequestException } from '@nestjs/common';
 
 describe('VisitsService', () => {
   let service: VisitsService;

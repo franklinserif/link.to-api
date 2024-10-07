@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from '@users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from '@users/users.module';
 import configuration from '@config/configuration';
 import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from '@links/links.module';

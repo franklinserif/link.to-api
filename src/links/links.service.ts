@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DeleteResult, LessThanOrEqual, Repository } from 'typeorm';
-import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Link } from '@links/entities/link.entity';
-import { shortenURL } from '@libs/link';
 import { VisitsService } from '@visits/visits.service';
 import { User } from '@users/entities/user.entity';
+import { shortenURL } from '@libs/link';
 import { VisitorInformation } from '@shared/interfaces/visitor';
 
 @Injectable()

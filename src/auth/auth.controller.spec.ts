@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Response } from 'express';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { ConfigService } from '@nestjs/config';
-import { SignInDto } from './dto';
 import { UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from '@users/dto';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import { AuthController } from '@auth/auth.controller';
+import { AuthService } from '@auth/auth.service';
+import { SignInDto } from '@auth/dto';
+import { CreateUserDto } from '@users/dto';
 
 describe('AuthController', () => {
   let controller: AuthController;

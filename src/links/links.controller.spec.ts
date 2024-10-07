@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LinksController } from '@links/links.controller';
-import { LinksService } from '@links/links.service';
-import { VisitsService } from '@visits/visits.service';
 import { PassportModule } from '@nestjs/passport';
+import { Response } from 'express';
+import { VisitsService } from '@visits/visits.service';
+import { LinksService } from '@links/links.service';
+import { LinksController } from '@links/links.controller';
 import { VisitorInformation } from '@shared/interfaces/visitor';
 import { LINKS } from '@shared/constants/testVariables';
-import { Response } from 'express';
 import { User } from '@users/entities/user.entity';
-import { CreateLinkDto, UpdateLinkDto } from './dto';
+import { CreateLinkDto, UpdateLinkDto } from '@links/dto';
 
 describe('LinksController', () => {
   let controller: LinksController;

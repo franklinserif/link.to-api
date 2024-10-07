@@ -1,12 +1,12 @@
 import { Controller, Post, Body, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { AuthService } from '@auth/auth.service';
 import { ConfigService } from '@nestjs/config';
+import { AuthService } from '@auth/auth.service';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from '@auth/dto';
 import { CreateUserDto } from '@users/dto';
 import { PRODUCTION } from '@shared/constants/server';
-import { GetRefreshToken } from './decorators/get-refreshtoken.decorator';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { GetRefreshToken } from '@auth/decorators/get-refreshtoken.decorator';
 import { PublicOperation } from '@shared/decorators';
 
 @ApiTags('Auth')

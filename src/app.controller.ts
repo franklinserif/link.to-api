@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { LinksService } from '@links/links.service';
 import { VisitorInformation } from '@shared/interfaces/visitor';
 import { GetVisitor } from '@visits/decorators/get-visitor.decorator';

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { VisitsService } from '@visits/visits.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { VisitsService } from '@visits/visits.service';
 import { Visit } from '@visits/entities/visit.entity';
 
 @Module({

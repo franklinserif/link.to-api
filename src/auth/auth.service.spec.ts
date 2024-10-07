@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { Repository } from 'typeorm';
+import { PassportModule } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '@auth/auth.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '@users/entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
 import * as encrypt from '@libs/encrypt';
-import { PassportModule } from '@nestjs/passport';
 
 describe('AuthService', () => {
   let service: AuthService;

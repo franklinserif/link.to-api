@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LinksService } from './links.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Link } from './entities/link.entity';
-import { VisitsService } from '@visits/visits.service';
-import { PassportModule } from '@nestjs/passport';
-import { LINKS } from '@shared/constants/testVariables';
-import { FindOperator, Repository } from 'typeorm';
-import { VisitorInformation } from '@shared/interfaces/visitor';
 import { NotFoundException } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { FindOperator, Repository } from 'typeorm';
+import { LinksService } from '@links/links.service';
+import { Link } from '@links/entities/link.entity';
+import { VisitsService } from '@visits/visits.service';
+import { LINKS } from '@shared/constants/testVariables';
+import { VisitorInformation } from '@shared/interfaces/visitor';
 
 describe('LinksService', () => {
   let service: LinksService;
