@@ -25,6 +25,7 @@
       "@links/*": ["links/*"],
       "@visits/*": ["visits/*"],
       "@auth/*": ["auth/*"],
+      "@mails/*": ["mails/*"],
       "@db/*": ["db/*"]
     }
   }
