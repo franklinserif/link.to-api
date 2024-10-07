@@ -7,6 +7,7 @@ import { LoggerMiddleware } from '@shared/middlewares/logger/logger.middleware';
 import { LinksModule } from '@links/links.module';
 import { VisitsModule } from '@visits/visits.module';
 import { AuthModule } from '@auth/auth.module';
+import { MailsModule } from '@mails/mails.module';
 import { AppController } from './app.controller';
 import { dataSourceOptions } from '@db/data-source';
 
@@ -26,6 +27,7 @@ import { dataSourceOptions } from '@db/data-source';
     LinksModule,
     VisitsModule,
     AuthModule,
+    MailsModule,
   ],
   controllers: [AppController],
   providers: [],
