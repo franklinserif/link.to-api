@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateVisitDto } from '@visits/dto';
@@ -18,7 +18,7 @@ export class VisitsService {
       await this.visitsRepository.save(visitor);
       return visitor;
     } catch (error) {
-      throw new BadRequestException(`Failed to create visit`);
+      throw new InternalServerErrorException(`Failed to create visit`);
     }
   }
 }

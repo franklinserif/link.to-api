@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { VisitsService } from '@visits/visits.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -73,7 +73,7 @@ describe('VisitsService', () => {
     mockVisitRepository.save.mockRejectedValue(new Error('Database error'));
 
     await expect(service.create(createVisitDto)).rejects.toThrow(
-      BadRequestException,
+      InternalServerErrorException,
     );
     expect(visitsRepository.create).toHaveBeenCalledWith(createVisitDto);
     expect(visitsRepository.save).toHaveBeenCalledWith(createVisitDto);
