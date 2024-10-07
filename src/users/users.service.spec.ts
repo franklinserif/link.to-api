@@ -5,10 +5,6 @@ import { UsersService } from '@users/users.service';
 import { User } from '@users/entities/user.entity';
 import * as encrypt from '@libs/encrypt';
 import { USERS } from '@shared/constants/testVariables';
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 

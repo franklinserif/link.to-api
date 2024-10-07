@@ -31,8 +31,8 @@ describe('LinksController', () => {
           useValue: {
             findAll: jest.fn(() => LINKS),
             create: jest.fn(
-              (_: { createLinkDto: CreateLinkDto; user: User }) => ({
-                ...mockCreateLink,
+              (criteria: { createLinkDto: CreateLinkDto; user: User }) => ({
+                ...criteria,
               }),
             ),
             update: jest.fn((id: string, updateLinkDto: UpdateLinkDto) => ({
