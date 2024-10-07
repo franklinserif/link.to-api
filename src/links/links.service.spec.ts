@@ -12,7 +12,7 @@ import { VisitorInformation } from '@shared/interfaces/visitor';
 describe('LinksService', () => {
   let service: LinksService;
   let linkRepository: Repository<Link>;
-  let LINK_REPOSITORY_TOKEN = getRepositoryToken(Link);
+  const LINK_REPOSITORY_TOKEN = getRepositoryToken(Link);
   const visitor: VisitorInformation = {
     browser: 'chrome',
     os: 'Linux',
