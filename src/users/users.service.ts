@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
 import { encryptPassword } from '@libs/encrypt';
+import { ErrorManager } from '@shared/exceptions/ExceptionManager';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
 
       return users;
     } catch (error) {
-      throw new InternalServerErrorException('cannot find users');
+      throw new ErrorManager(error, 'cannot find users');
     }
   }
 
@@ -37,7 +38,7 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      this.handleErrors(error, id);
+      throw new ErrorManager(error);
     }
   }
 
@@ -59,7 +60,7 @@ export class UsersService {
 
       return await this.userRepository.save(user);
     } catch (error) {
-      this.handleErrors(error, id, `can't update user with ${id}`);
+      throw new ErrorManager(error);
     }
   }
 
@@ -67,17 +68,7 @@ export class UsersService {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
-      this.handleErrors(error, id, `can't delete user with ${id}`);
+      throw new ErrorManager(error, `can't delete user with ${id}`);
     }
-  }
-
-  private handleErrors(error: any, id: string, message?: string) {
-    if (error instanceof NotFoundException) {
-      throw new NotFoundException(`User with id ${id} doesn't exist`);
-    } else if (error instanceof QueryFailedError) {
-      throw new BadRequestException(message);
-    }
-
-    throw new InternalServerErrorException();
   }
 }
