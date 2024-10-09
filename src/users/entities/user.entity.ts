@@ -29,6 +29,9 @@ export class User {
   @Column({ type: 'text', nullable: false, select: false })
   password: string;
 
+  @Column({ nullable: true, select: false })
+  otp: number;
+
   @OneToMany(() => Link, (links) => links.user)
   links: Link[];
 
