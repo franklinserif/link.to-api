@@ -11,7 +11,7 @@ export const USERS = [
     createdAt: new Date(),
     updatedAt: new Date(),
     links: null,
-    checkProperties: jest.fn(),
+    checkProperties: () => {},
   },
   {
     id: '2342352',
@@ -23,7 +23,7 @@ export const USERS = [
     createdAt: new Date(),
     updatedAt: new Date(),
     links: null,
-    checkProperties: jest.fn(),
+    checkProperties: () => {},
   },
   {
     id: '3453463',
@@ -35,7 +35,7 @@ export const USERS = [
     createdAt: new Date(),
     updatedAt: new Date(),
     links: null,
-    checkProperties: jest.fn(),
+    checkProperties: () => {},
   },
   {
     id: '4564574',
@@ -47,7 +47,7 @@ export const USERS = [
     createdAt: new Date(),
     updatedAt: new Date(),
     links: null,
-    checkProperties: jest.fn(),
+    checkProperties: () => {},
   },
   {
     id: '5675685',
@@ -59,7 +59,7 @@ export const USERS = [
     createdAt: new Date(),
     updatedAt: new Date(),
     links: null,
-    checkProperties: jest.fn(),
+    checkProperties: () => {},
   },
 ];
 

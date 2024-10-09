@@ -46,7 +46,7 @@ Asegúrate de tener instalado:
    DATABASE_USER=usuario_de_tu_base_de_datos
    DATABASE_USER_PASSWORD=contraseña_de_tu_base_de_datos
    PASSPORT_SECRET=tu_secreto_de_passport
-   SERVER_PORT=3000
+   PORT=3000
    ```
 
 3. Levanta los servicios con Docker Compose:
