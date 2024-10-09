@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -12,6 +13,8 @@ import { User } from '@users/entities/user.entity';
 import { Tokens, SignupResponse } from '@auth/interfaces';
 import { comparePassword, encryptPassword } from '@libs/encrypt';
 import { ErrorManager } from '@shared/exceptions/ExceptionManager';
+import { MailsService } from '@mails/mails.service';
+import { generateOTP } from '@libs/code';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +22,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly usersRepsitory: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly mailsService: MailsService,
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<Tokens> {
@@ -105,6 +109,79 @@ export class AuthService {
       return tokens;
     } catch (error) {
       throw new ErrorManager(error, 'failed to refresh token');
+    }
+  }
+
+  async createOTP(email: string) {
+    try {
+      const user = await this.usersRepsitory.findOne({ where: { email } });
+
+      if (!user?.id) throw new NotFoundException('user not found');
+
+      const otp = generateOTP();
+
+      user.otp = otp;
+
+      await this.usersRepsitory.save(user);
+
+      return user;
+    } catch (error) {
+      throw new ErrorManager(error);
+    }
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const user = await this.createOTP(email);
+
+      const result = await this.mailsService.sendResetPassword({
+        email: user.email,
+        name: user.firstName,
+        code: `${user.otp}`,
+      });
+
+      return result;
+    } catch (error) {
+      throw new ErrorManager(error);
+    }
+  }
+
+  async resetPassword({
+    email,
+    newPassword,
+    otp,
+  }: {
+    email: string;
+    newPassword: string;
+    otp: number;
+  }) {
+    try {
+      const user = await this.usersRepsitory.findOne({
+        where: { email },
+
+        select: {
+          id: true,
+          password: true,
+          firstName: true,
+          otp: true,
+        },
+      });
+
+      if (!user?.id) throw new NotFoundException('user not found');
+
+      if (user.otp !== otp)
+        throw new BadRequestException('the otp code is not valid');
+
+      const encryptedPassword = await encryptPassword(newPassword);
+
+      user.password = encryptedPassword;
+      user.otp = null;
+
+      await this.usersRepsitory.save(user);
+
+      return { message: 'reset password completed' };
+    } catch (error) {
+      throw new ErrorManager(error);
     }
   }
 }
