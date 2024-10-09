@@ -3,8 +3,8 @@ import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '@users/dto';
 import { User } from '@users/entities/user.entity';
-import { encryptPassword } from '@libs/encrypt';
 import { ErrorManager } from '@shared/exceptions/ExceptionManager';
+import { encryptPassword } from '@libs/encrypt';
 
 @Injectable()
 export class UsersService {
