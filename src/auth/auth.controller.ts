@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@auth/auth.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SignInDto } from '@auth/dto';
+import { ForgotPasswordDto, SignInDto, ResetPasswordDto } from '@auth/dto';
 import { CreateUserDto } from '@users/dto';
 import { PRODUCTION } from '@shared/constants/server';
 import { GetRefreshToken } from '@auth/decorators/get-refreshtoken.decorator';
@@ -54,6 +54,30 @@ export class AuthController {
     });
 
     return res.send({ accessToken, user });
+  }
+
+  @Post('forgot-password')
+  @PublicOperation('Forgot password', [
+    ApiResponse({ status: 201, description: 'OTP code was sent.' }),
+    ApiResponse({ status: 400, description: 'Invalid input data.' }),
+  ])
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    const result = await this.authService.forgotPassword(
+      forgotPasswordDto.email,
+    );
+
+    return result;
+  }
+
+  @Post('reset-password')
+  @PublicOperation('reset password', [
+    ApiResponse({ status: 201, description: 'reset password successfuly.' }),
+    ApiResponse({ status: 400, description: 'Invalid input data.' }),
+  ])
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    const result = await this.authService.resetPassword(resetPasswordDto);
+
+    return result;
   }
 
   @Get('refresh-token')
